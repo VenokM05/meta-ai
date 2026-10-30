@@ -1,0 +1,115 @@
+import { useMemo, useState } from "react";
+import { DEFAULT_CAMERA, VOCABULARY, sceneToSpatial, summarizeScene } from "@roomguide/core";
+import { mockSceneAt } from "../lib/mockScenes";
+import { CameraStage } from "../components/CameraStage";
+import { SonarMap } from "../components/SonarMap";
+import { IconPlay } from "../lib/icons";
+
+/**
+ * Single-frame mode: one photo, one description, no loop. This is the v1 path — the one
+ * that cannot fail during judging because there is no streaming, no gate and no timing
+ * budget to hold together.
+ */
+export function FrameScreen() {
+  const [frameTime, setFrameTime] = useState(11_000);
+  const [analysed, setAnalysed] = useState<{ at: number; seed: number } | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const objects = useMemo(() => {
+    if (!analysed) return [];
+    const scene = mockSceneAt(analysed.at + analysed.seed, 0);
+    return sceneToSpatial(scene, DEFAULT_CAMERA);
+  }, [analysed]);
+
+  async function analyse() {
+    setBusy(true);
+    // Stands in for the real round trip so loading states are exercised, not decorative.
+    await new Promise((r) => setTimeout(r, 420));
+    setAnalysed({ at: frameTime, seed: Math.floor(Math.random() * 34_000) });
+    setBusy(false);
+  }
+
+  return (
+    <div className="rg-page">
+      <div className="rg-page-head">
+        <h1>Single frame</h1>
+        <p>
+          One image in, one description out. Nothing streams, nothing races a latency budget, and the
+          narration is produced by the same geometry and language code the live guide uses.
+        </p>
+      </div>
+
+      <div className="rg-notice rg-notice--accent" role="note">
+        <IconPlay />
+        <span>
+          Mock provider active: the detections below are synthetic scene fixtures, so this screen validates
+          the pipeline end to end. It is not evidence of model accuracy — that is what the Quality page is for.
+        </span>
+      </div>
+
+      <div className="rg-grid-2">
+        <section className="rg-panel">
+          <div className="rg-panel-head">
+            <h2 className="rg-panel-title">Source</h2>
+          </div>
+          <div className="rg-panel-body">
+            <div className="rg-field">
+              <label htmlFor="frame-time">Scene moment</label>
+              <div className="rg-slider-row">
+                <input
+                  id="frame-time"
+                  type="range"
+                  min={0}
+                  max={33}
+                  step={1}
+                  value={Math.round(frameTime / 1000)}
+                  onChange={(e) => setFrameTime(Number(e.target.value) * 1000)}
+                />
+                <output htmlFor="frame-time" data-numeric className="rg-chip">
+                  {Math.round(frameTime / 1000)} s
+                </output>
+              </div>
+              <p className="rg-hint">
+                Drag to pick a different synthetic scene, then analyse it.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="rg-btn rg-btn--primary"
+              onClick={analyse}
+              disabled={busy}
+              style={{ marginTop: "var(--rg-sp-4)" }}
+            >
+              <span>{busy ? "Analysing…" : "Analyse frame"}</span>
+            </button>
+          </div>
+        </section>
+
+        <section className="rg-panel">
+          <div className="rg-panel-head">
+            <h2 className="rg-panel-title">Reading</h2>
+          </div>
+          <div className="rg-panel-body">
+            <p className="rg-ticker-now" aria-live="polite">
+              {analysed ? summarizeScene(objects) : "No frame analysed yet."}
+            </p>
+            <p className="rg-hint" style={{ marginTop: "var(--rg-sp-3)" }}>
+              {VOCABULARY.length} concepts are promptable. Any object outside them is reported as untracked,
+              never as absent.
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <CameraStage
+        objects={objects}
+        videoStream={null}
+        soundingConcepts={new Set()}
+        provider="mock"
+      />
+
+      {analysed && <SonarMap objects={objects} soundingConcepts={new Set()} />}
+    </div>
+  );
+}

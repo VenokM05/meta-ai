@@ -1,0 +1,109 @@
+/* Reset + primitives. Component styles live in components.css. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--rg-bg);
+  color: var(--rg-text-1);
+  font-family: var(--rg-font-ui);
+  font-size: var(--rg-text-base);
+  line-height: var(--rg-leading);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Numerals everywhere they matter are tabular, so live values never jitter. */
+[data-numeric],
+.rg-mono {
+  font-family: var(--rg-font-data);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: var(--rg-focus-ring);
+  border-radius: var(--rg-r-2);
+}
+
+/*
+  High-contrast modes strip box-shadow, which would leave the ring invisible to the
+  users who most need it, so restate the focus indicator as a real outline there.
+*/
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 3px solid Highlight;
+  }
+}
+
+.rg-skip-link {
+  position: absolute;
+  left: var(--rg-sp-3);
+  top: -64px;
+  z-index: var(--rg-z-max);
+  padding: var(--rg-sp-3) var(--rg-sp-4);
+  background: var(--rg-accent);
+  color: var(--rg-accent-ink);
+  border-radius: var(--rg-r-2);
+  font-weight: 600;
+  text-decoration: none;
+  transition: top var(--rg-med) var(--rg-ease-out);
+}
+
+.rg-skip-link:focus {
+  top: var(--rg-sp-3);
+}
+
+.rg-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

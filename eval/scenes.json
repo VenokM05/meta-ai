@@ -1,0 +1,260 @@
+[
+  {
+    "image": "synthetic-03s.jpg",
+    "at": 3,
+    "truth": [
+      {
+        "concept": "chair",
+        "bbox": {
+          "x": 0.1,
+          "y": 0.58,
+          "w": 0.17,
+          "h": 0.26
+        },
+        "hazard": true
+      },
+      {
+        "concept": "cup_liquid",
+        "bbox": {
+          "x": 0.79,
+          "y": 0.44,
+          "w": 0.06,
+          "h": 0.07
+        },
+        "hazard": false
+      }
+    ]
+  },
+  {
+    "image": "synthetic-06s.jpg",
+    "at": 6,
+    "truth": [
+      {
+        "concept": "chair",
+        "bbox": {
+          "x": 0.1,
+          "y": 0.58,
+          "w": 0.17,
+          "h": 0.26
+        },
+        "hazard": true
+      },
+      {
+        "concept": "curb",
+        "bbox": {
+          "x": 0.06,
+          "y": 0.86,
+          "w": 0.88,
+          "h": 0.05
+        },
+        "hazard": true
+      },
+      {
+        "concept": "cup_liquid",
+        "bbox": {
+          "x": 0.79,
+          "y": 0.44,
+          "w": 0.06,
+          "h": 0.07
+        },
+        "hazard": false
+      }
+    ]
+  },
+  {
+    "image": "synthetic-10s.jpg",
+    "at": 10,
+    "truth": [
+      {
+        "concept": "curb",
+        "bbox": {
+          "x": 0.06,
+          "y": 0.86,
+          "w": 0.88,
+          "h": 0.05
+        },
+        "hazard": true
+      },
+      {
+        "concept": "cup_liquid",
+        "bbox": {
+          "x": 0.79,
+          "y": 0.44,
+          "w": 0.06,
+          "h": 0.07
+        },
+        "hazard": false
+      },
+      {
+        "concept": "stairs",
+        "bbox": {
+          "x": 0.3907692307692308,
+          "y": 0.5553846153846154,
+          "w": 0.28615384615384615,
+          "h": 0.18000000000000002
+        },
+        "hazard": true
+      }
+    ]
+  },
+  {
+    "image": "synthetic-13s.jpg",
+    "at": 13,
+    "truth": [
+      {
+        "concept": "curb",
+        "bbox": {
+          "x": 0.06,
+          "y": 0.86,
+          "w": 0.88,
+          "h": 0.05
+        },
+        "hazard": true
+      },
+      {
+        "concept": "stairs",
+        "bbox": {
+          "x": 0.3769230769230769,
+          "y": 0.5784615384615385,
+          "w": 0.3553846153846154,
+          "h": 0.24000000000000002
+        },
+        "hazard": true
+      }
+    ]
+  },
+  {
+    "image": "synthetic-17s.jpg",
+    "at": 17,
+    "truth": [
+      {
+        "concept": "stairs",
+        "bbox": {
+          "x": 0.3584615384615385,
+          "y": 0.6092307692307692,
+          "w": 0.44769230769230767,
+          "h": 0.32
+        },
+        "hazard": true
+      },
+      {
+        "concept": "person",
+        "bbox": {
+          "x": 0.66,
+          "y": 0.34,
+          "w": 0.13,
+          "h": 0.5
+        },
+        "hazard": true
+      },
+      {
+        "concept": "pole",
+        "bbox": {
+          "x": 0.88,
+          "y": 0.36,
+          "w": 0.03,
+          "h": 0.44
+        },
+        "hazard": true
+      }
+    ]
+  },
+  {
+    "image": "synthetic-22s.jpg",
+    "at": 22,
+    "truth": [
+      {
+        "concept": "person",
+        "bbox": {
+          "x": 0.66,
+          "y": 0.34,
+          "w": 0.13,
+          "h": 0.5
+        },
+        "hazard": true
+      },
+      {
+        "concept": "pole",
+        "bbox": {
+          "x": 0.88,
+          "y": 0.36,
+          "w": 0.03,
+          "h": 0.44
+        },
+        "hazard": true
+      },
+      {
+        "concept": "cord",
+        "bbox": {
+          "x": 0.3,
+          "y": 0.85,
+          "w": 0.34,
+          "h": 0.05
+        },
+        "hazard": true
+      }
+    ]
+  },
+  {
+    "image": "synthetic-26s.jpg",
+    "at": 26,
+    "truth": [
+      {
+        "concept": "pole",
+        "bbox": {
+          "x": 0.88,
+          "y": 0.36,
+          "w": 0.03,
+          "h": 0.44
+        },
+        "hazard": true
+      },
+      {
+        "concept": "cord",
+        "bbox": {
+          "x": 0.3,
+          "y": 0.85,
+          "w": 0.34,
+          "h": 0.05
+        },
+        "hazard": true
+      },
+      {
+        "concept": "doorway",
+        "bbox": {
+          "x": 0.08,
+          "y": 0.3,
+          "w": 0.19,
+          "h": 0.46
+        },
+        "hazard": false
+      }
+    ]
+  },
+  {
+    "image": "synthetic-31s.jpg",
+    "at": 31,
+    "truth": [
+      {
+        "concept": "doorway",
+        "bbox": {
+          "x": 0.08,
+          "y": 0.3,
+          "w": 0.19,
+          "h": 0.46
+        },
+        "hazard": false
+      },
+      {
+        "concept": "open_door",
+        "bbox": {
+          "x": 0.44,
+          "y": 0.36,
+          "w": 0.22,
+          "h": 0.4
+        },
+        "hazard": true
+      }
+    ]
+  }
+]

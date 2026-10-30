@@ -1,0 +1,866 @@
+{
+  "generatedAt": "2026-10-29 23:45:47",
+  "kind": "self-check",
+  "note": "Ground truth derived from synthetic actors; validates the scoring harness only.",
+  "iouThreshold": 0.5,
+  "report": {
+    "images": 8,
+    "totalTruth": 21,
+    "overall": {
+      "tp": 21,
+      "fp": 0,
+      "fn": 0,
+      "recall": 1,
+      "precision": 1,
+      "falseNegativeRate": 0
+    },
+    "perClass": {
+      "chair": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "recall": 1,
+        "precision": 1,
+        "falseNegativeRate": 0
+      },
+      "cup_liquid": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "recall": 1,
+        "precision": 1,
+        "falseNegativeRate": 0
+      },
+      "curb": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "recall": 1,
+        "precision": 1,
+        "falseNegativeRate": 0
+      },
+      "stairs": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "recall": 1,
+        "precision": 1,
+        "falseNegativeRate": 0
+      },
+      "person": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "recall": 1,
+        "precision": 1,
+        "falseNegativeRate": 0
+      },
+      "pole": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "recall": 1,
+        "precision": 1,
+        "falseNegativeRate": 0
+      },
+      "cord": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "recall": 1,
+        "precision": 1,
+        "falseNegativeRate": 0
+      },
+      "doorway": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "recall": 1,
+        "precision": 1,
+        "falseNegativeRate": 0
+      },
+      "open_door": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "recall": 1,
+        "precision": 1,
+        "falseNegativeRate": 0
+      }
+    },
+    "perTier": {
+      "critical": {
+        "tp": 8,
+        "fp": 0,
+        "fn": 0,
+        "recall": 1,
+        "precision": 1,
+        "falseNegativeRate": 0,
+        "hazardTruth": 8,
+        "hazardMissed": 0
+      },
+      "caution": {
+        "tp": 8,
+        "fp": 0,
+        "fn": 0,
+        "recall": 1,
+        "precision": 1,
+        "falseNegativeRate": 0,
+        "hazardTruth": 8,
+        "hazardMissed": 0
+      },
+      "informative": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "recall": 1,
+        "precision": 1,
+        "falseNegativeRate": 0,
+        "hazardTruth": 0,
+        "hazardMissed": 0
+      }
+    },
+    "hazardRecall": 1,
+    "results": [
+      {
+        "image": "synthetic-03s.jpg",
+        "labeled": [
+          {
+            "truth": {
+              "concept": "chair",
+              "bbox": {
+                "x": 0.1,
+                "y": 0.58,
+                "w": 0.17,
+                "h": 0.26
+              },
+              "hazard": true
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "cup_liquid",
+              "bbox": {
+                "x": 0.79,
+                "y": 0.44,
+                "w": 0.06,
+                "h": 0.07
+              },
+              "hazard": false
+            },
+            "matched": true
+          }
+        ],
+        "predictions": [
+          {
+            "concept": "chair",
+            "bbox": {
+              "x": 0.1,
+              "y": 0.58,
+              "w": 0.17,
+              "h": 0.26
+            },
+            "confidence": 0.79
+          },
+          {
+            "concept": "cup_liquid",
+            "bbox": {
+              "x": 0.79,
+              "y": 0.44,
+              "w": 0.06,
+              "h": 0.07
+            },
+            "confidence": 0.5
+          }
+        ],
+        "missed": [],
+        "missedHazards": [],
+        "perClass": {
+          "chair": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "cup_liquid": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          }
+        }
+      },
+      {
+        "image": "synthetic-06s.jpg",
+        "labeled": [
+          {
+            "truth": {
+              "concept": "chair",
+              "bbox": {
+                "x": 0.1,
+                "y": 0.58,
+                "w": 0.17,
+                "h": 0.26
+              },
+              "hazard": true
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "curb",
+              "bbox": {
+                "x": 0.06,
+                "y": 0.86,
+                "w": 0.88,
+                "h": 0.05
+              },
+              "hazard": true
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "cup_liquid",
+              "bbox": {
+                "x": 0.79,
+                "y": 0.44,
+                "w": 0.06,
+                "h": 0.07
+              },
+              "hazard": false
+            },
+            "matched": true
+          }
+        ],
+        "predictions": [
+          {
+            "concept": "curb",
+            "bbox": {
+              "x": 0.06,
+              "y": 0.86,
+              "w": 0.88,
+              "h": 0.05
+            },
+            "confidence": 0.55
+          },
+          {
+            "concept": "chair",
+            "bbox": {
+              "x": 0.1,
+              "y": 0.58,
+              "w": 0.17,
+              "h": 0.26
+            },
+            "confidence": 0.8
+          },
+          {
+            "concept": "cup_liquid",
+            "bbox": {
+              "x": 0.79,
+              "y": 0.44,
+              "w": 0.06,
+              "h": 0.07
+            },
+            "confidence": 0.57
+          }
+        ],
+        "missed": [],
+        "missedHazards": [],
+        "perClass": {
+          "chair": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "curb": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "cup_liquid": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          }
+        }
+      },
+      {
+        "image": "synthetic-10s.jpg",
+        "labeled": [
+          {
+            "truth": {
+              "concept": "curb",
+              "bbox": {
+                "x": 0.06,
+                "y": 0.86,
+                "w": 0.88,
+                "h": 0.05
+              },
+              "hazard": true
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "cup_liquid",
+              "bbox": {
+                "x": 0.79,
+                "y": 0.44,
+                "w": 0.06,
+                "h": 0.07
+              },
+              "hazard": false
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "stairs",
+              "bbox": {
+                "x": 0.3907692307692308,
+                "y": 0.5553846153846154,
+                "w": 0.28615384615384615,
+                "h": 0.18000000000000002
+              },
+              "hazard": true
+            },
+            "matched": true
+          }
+        ],
+        "predictions": [
+          {
+            "concept": "stairs",
+            "bbox": {
+              "x": 0.3907692307692308,
+              "y": 0.5553846153846154,
+              "w": 0.28615384615384615,
+              "h": 0.18000000000000002
+            },
+            "confidence": 0.5
+          },
+          {
+            "concept": "curb",
+            "bbox": {
+              "x": 0.06,
+              "y": 0.86,
+              "w": 0.88,
+              "h": 0.05
+            },
+            "confidence": 0.55
+          },
+          {
+            "concept": "cup_liquid",
+            "bbox": {
+              "x": 0.79,
+              "y": 0.44,
+              "w": 0.06,
+              "h": 0.07
+            },
+            "confidence": 0.66
+          }
+        ],
+        "missed": [],
+        "missedHazards": [],
+        "perClass": {
+          "curb": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "cup_liquid": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "stairs": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          }
+        }
+      },
+      {
+        "image": "synthetic-13s.jpg",
+        "labeled": [
+          {
+            "truth": {
+              "concept": "curb",
+              "bbox": {
+                "x": 0.06,
+                "y": 0.86,
+                "w": 0.88,
+                "h": 0.05
+              },
+              "hazard": true
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "stairs",
+              "bbox": {
+                "x": 0.3769230769230769,
+                "y": 0.5784615384615385,
+                "w": 0.3553846153846154,
+                "h": 0.24000000000000002
+              },
+              "hazard": true
+            },
+            "matched": true
+          }
+        ],
+        "predictions": [
+          {
+            "concept": "stairs",
+            "bbox": {
+              "x": 0.3769230769230769,
+              "y": 0.5784615384615385,
+              "w": 0.3553846153846154,
+              "h": 0.24000000000000002
+            },
+            "confidence": 0.59
+          },
+          {
+            "concept": "curb",
+            "bbox": {
+              "x": 0.06,
+              "y": 0.86,
+              "w": 0.88,
+              "h": 0.05
+            },
+            "confidence": 0.55
+          }
+        ],
+        "missed": [],
+        "missedHazards": [],
+        "perClass": {
+          "curb": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "stairs": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          }
+        }
+      },
+      {
+        "image": "synthetic-17s.jpg",
+        "labeled": [
+          {
+            "truth": {
+              "concept": "stairs",
+              "bbox": {
+                "x": 0.3584615384615385,
+                "y": 0.6092307692307692,
+                "w": 0.44769230769230767,
+                "h": 0.32
+              },
+              "hazard": true
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "person",
+              "bbox": {
+                "x": 0.66,
+                "y": 0.34,
+                "w": 0.13,
+                "h": 0.5
+              },
+              "hazard": true
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "pole",
+              "bbox": {
+                "x": 0.88,
+                "y": 0.36,
+                "w": 0.03,
+                "h": 0.44
+              },
+              "hazard": true
+            },
+            "matched": true
+          }
+        ],
+        "predictions": [
+          {
+            "concept": "stairs",
+            "bbox": {
+              "x": 0.3584615384615385,
+              "y": 0.6092307692307692,
+              "w": 0.44769230769230767,
+              "h": 0.32
+            },
+            "confidence": 0.72
+          },
+          {
+            "concept": "person",
+            "bbox": {
+              "x": 0.66,
+              "y": 0.34,
+              "w": 0.13,
+              "h": 0.5
+            },
+            "confidence": 0.76
+          },
+          {
+            "concept": "pole",
+            "bbox": {
+              "x": 0.88,
+              "y": 0.36,
+              "w": 0.03,
+              "h": 0.44
+            },
+            "confidence": 0.58
+          }
+        ],
+        "missed": [],
+        "missedHazards": [],
+        "perClass": {
+          "stairs": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "person": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "pole": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          }
+        }
+      },
+      {
+        "image": "synthetic-22s.jpg",
+        "labeled": [
+          {
+            "truth": {
+              "concept": "person",
+              "bbox": {
+                "x": 0.66,
+                "y": 0.34,
+                "w": 0.13,
+                "h": 0.5
+              },
+              "hazard": true
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "pole",
+              "bbox": {
+                "x": 0.88,
+                "y": 0.36,
+                "w": 0.03,
+                "h": 0.44
+              },
+              "hazard": true
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "cord",
+              "bbox": {
+                "x": 0.3,
+                "y": 0.85,
+                "w": 0.34,
+                "h": 0.05
+              },
+              "hazard": true
+            },
+            "matched": true
+          }
+        ],
+        "predictions": [
+          {
+            "concept": "cord",
+            "bbox": {
+              "x": 0.3,
+              "y": 0.85,
+              "w": 0.34,
+              "h": 0.05
+            },
+            "confidence": 0.44
+          },
+          {
+            "concept": "person",
+            "bbox": {
+              "x": 0.66,
+              "y": 0.34,
+              "w": 0.13,
+              "h": 0.5
+            },
+            "confidence": 0.86
+          },
+          {
+            "concept": "pole",
+            "bbox": {
+              "x": 0.88,
+              "y": 0.36,
+              "w": 0.03,
+              "h": 0.44
+            },
+            "confidence": 0.58
+          }
+        ],
+        "missed": [],
+        "missedHazards": [],
+        "perClass": {
+          "person": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "pole": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "cord": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          }
+        }
+      },
+      {
+        "image": "synthetic-26s.jpg",
+        "labeled": [
+          {
+            "truth": {
+              "concept": "pole",
+              "bbox": {
+                "x": 0.88,
+                "y": 0.36,
+                "w": 0.03,
+                "h": 0.44
+              },
+              "hazard": true
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "cord",
+              "bbox": {
+                "x": 0.3,
+                "y": 0.85,
+                "w": 0.34,
+                "h": 0.05
+              },
+              "hazard": true
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "doorway",
+              "bbox": {
+                "x": 0.08,
+                "y": 0.3,
+                "w": 0.19,
+                "h": 0.46
+              },
+              "hazard": false
+            },
+            "matched": true
+          }
+        ],
+        "predictions": [
+          {
+            "concept": "cord",
+            "bbox": {
+              "x": 0.3,
+              "y": 0.85,
+              "w": 0.34,
+              "h": 0.05
+            },
+            "confidence": 0.59
+          },
+          {
+            "concept": "pole",
+            "bbox": {
+              "x": 0.88,
+              "y": 0.36,
+              "w": 0.03,
+              "h": 0.44
+            },
+            "confidence": 0.58
+          },
+          {
+            "concept": "doorway",
+            "bbox": {
+              "x": 0.08,
+              "y": 0.3,
+              "w": 0.19,
+              "h": 0.46
+            },
+            "confidence": 0.66
+          }
+        ],
+        "missed": [],
+        "missedHazards": [],
+        "perClass": {
+          "pole": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "cord": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "doorway": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          }
+        }
+      },
+      {
+        "image": "synthetic-31s.jpg",
+        "labeled": [
+          {
+            "truth": {
+              "concept": "doorway",
+              "bbox": {
+                "x": 0.08,
+                "y": 0.3,
+                "w": 0.19,
+                "h": 0.46
+              },
+              "hazard": false
+            },
+            "matched": true
+          },
+          {
+            "truth": {
+              "concept": "open_door",
+              "bbox": {
+                "x": 0.44,
+                "y": 0.36,
+                "w": 0.22,
+                "h": 0.4
+              },
+              "hazard": true
+            },
+            "matched": true
+          }
+        ],
+        "predictions": [
+          {
+            "concept": "open_door",
+            "bbox": {
+              "x": 0.44,
+              "y": 0.36,
+              "w": 0.22,
+              "h": 0.4
+            },
+            "confidence": 0.55
+          },
+          {
+            "concept": "doorway",
+            "bbox": {
+              "x": 0.08,
+              "y": 0.3,
+              "w": 0.19,
+              "h": 0.46
+            },
+            "confidence": 0.66
+          }
+        ],
+        "missed": [],
+        "missedHazards": [],
+        "perClass": {
+          "doorway": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          },
+          "open_door": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "recall": 1,
+            "precision": 1,
+            "falseNegativeRate": 0
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.venv/
+coverage/
+*.tsbuildinfo
+.env
+.env.local
+.DS_Store
+eval/images/*.jpg
+eval/images/*.png
+eval/images/*.webp
