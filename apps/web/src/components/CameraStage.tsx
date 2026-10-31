@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import type { RefObject } from "react";
 import type { SpatialObject } from "@roomguide/core";
 
 const VW = 100;
@@ -43,13 +44,20 @@ export function CameraStage({
   videoStream,
   soundingConcepts,
   provider,
+  videoRef: externalRef,
 }: {
   objects: SpatialObject[];
   videoStream: MediaStream | null;
   soundingConcepts: Set<string>;
   provider: "mock" | "meta";
+  /**
+   * The element the live provider grabs frames from. Passed in so the hook that runs sweeps
+   * holds the ref, rather than reaching into the DOM of a component that only displays it.
+   */
+  videoRef?: RefObject<HTMLVideoElement | null>;
 }) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const localRef = useRef<HTMLVideoElement | null>(null);
+  const videoRef = externalRef ?? localRef;
 
   useEffect(() => {
     const el = videoRef.current;
@@ -60,12 +68,12 @@ export function CameraStage({
     } else {
       el.srcObject = null;
     }
-  }, [videoStream]);
+  }, [videoStream, videoRef]);
 
   const corridorApexY = 28;
 
   return (
-    <div className="rg-camera">
+    <div className="rg-camera" data-provider={provider}>
       {videoStream ? <video ref={videoRef} playsInline muted autoPlay /> : <SyntheticBackdrop />}
 
       <svg
@@ -88,7 +96,16 @@ export function CameraStage({
         ))}
       </svg>
 
-      {provider === "mock" && <div className="rg-feed-tag">Synthetic feed</div>}
+      <div className="rg-feed-tag" data-tone={provider === "mock" ? "mock" : "live"}>
+        {provider === "mock" ? (
+          "Synthetic feed"
+        ) : (
+          <>
+            <span className="rg-live-dot" aria-hidden="true" />
+            Live camera
+          </>
+        )}
+      </div>
 
       {/*
         Labels live in HTML rather than inside the SVG: the overlay svg is stretched with

@@ -6,8 +6,15 @@
   box-sizing: border-box;
 }
 
+/* Author display rules would otherwise beat the UA stylesheet's [hidden]. */
+[hidden] {
+  display: none !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
+  color-scheme: dark;
+  scrollbar-color: var(--rg-border-strong) var(--rg-bg);
 }
 
 body {
@@ -22,13 +29,19 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/*
+  Display type is a serif with optical sizing. The interface is a tool, but the
+  words it produces are prose — the typography says that out loud.
+*/
 h1,
 h2,
 h3 {
   margin: 0;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  font-family: var(--rg-font-display);
+  font-weight: 400;
+  font-optical-sizing: auto;
+  line-height: 1.1;
+  letter-spacing: var(--rg-tracking-tight);
 }
 
 p {
@@ -40,6 +53,15 @@ input,
 select {
   font: inherit;
   color: inherit;
+}
+
+a {
+  color: var(--rg-accent);
+}
+
+::selection {
+  background: var(--rg-accent);
+  color: var(--rg-accent-ink);
 }
 
 /* Numerals everywhere they matter are tabular, so live values never jitter. */
@@ -69,10 +91,10 @@ select {
 
 .rg-skip-link {
   position: absolute;
-  left: var(--rg-sp-3);
-  top: -64px;
+  left: var(--rg-sp-4);
+  top: -80px;
   z-index: var(--rg-z-max);
-  padding: var(--rg-sp-3) var(--rg-sp-4);
+  padding: var(--rg-sp-3) var(--rg-sp-5);
   background: var(--rg-accent);
   color: var(--rg-accent-ink);
   border-radius: var(--rg-r-2);
@@ -82,7 +104,7 @@ select {
 }
 
 .rg-skip-link:focus {
-  top: var(--rg-sp-3);
+  top: var(--rg-sp-4);
 }
 
 .rg-visually-hidden {

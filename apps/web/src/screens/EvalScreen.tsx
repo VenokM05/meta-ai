@@ -56,13 +56,16 @@ export function EvalScreen() {
 
   return (
     <div className="rg-page">
-      <div className="rg-page-head">
+      <header className="rg-page-head">
+        <p className="rg-eyebrow">
+          Evaluation · {source?.generatedAt ?? "no report loaded"}
+        </p>
         <h1>Quality</h1>
         <p>
           Per-class recall, false-negative rate, and an auditable list of every hazard the system failed to
           see. Recall is the number that matters here: a missed chair costs nothing, a missed step does.
         </p>
-      </div>
+      </header>
 
       {state === "loading" && (
         <div className="rg-notice rg-notice--accent" role="status">
@@ -88,7 +91,7 @@ export function EvalScreen() {
       )}
 
       <div className="rg-metrics" hidden={state !== "ready"}>
-        <div className="rg-kpi">
+        <div className="rg-kpi rg-kpi--hero">
           <div className="rg-kpi-label">Hazard recall</div>
           <div className="rg-kpi-value" data-numeric>
             {Math.round(report.hazardRecall * 100)}%
@@ -119,7 +122,7 @@ export function EvalScreen() {
         </div>
         <div className="rg-kpi">
           <div className="rg-kpi-label">Weakest class</div>
-          <div className="rg-kpi-value" data-numeric style={{ fontSize: "var(--rg-text-lg)" }}>
+          <div className="rg-kpi-value rg-kpi-value--text">
             {bad ? labelFor(bad[0]) : "—"}
           </div>
           <div className="rg-kpi-note">
@@ -135,7 +138,7 @@ export function EvalScreen() {
       </div>
 
       <div className="rg-grid-2" hidden={state !== "ready"}>
-        <section className="rg-panel">
+        <section className="rg-panel rg-tier-panel">
           <div className="rg-panel-head">
             <h2 className="rg-panel-title">Recall by tier</h2>
             <span className="rg-chip">target {Math.round(RECALL_TARGET * 100)}%</span>
@@ -145,6 +148,11 @@ export function EvalScreen() {
             {tierRows.map(([tier, s]) => (
               <BulletChart key={tier} name={tier} value={s.recall} target={RECALL_TARGET} />
             ))}
+            <p className="rg-hint rg-tier-note">
+              Tier recall pools labelled instances, so it reflects what appears in the fixtures rather than a
+              flat average of classes. A rare critical class can still hide here — the class table is the
+              check for that.
+            </p>
           </div>
         </section>
 
@@ -173,39 +181,41 @@ export function EvalScreen() {
           </span>
         </div>
         <div className="rg-panel-body">
-          <table className="rg-table">
-            <caption>
-              Every ground-truth hazard with no matching prediction. This is the failure list, shown on
-              purpose.
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">Image</th>
-                <th scope="col">Concept</th>
-                <th scope="col">Location</th>
-                <th scope="col">Why it matters</th>
-              </tr>
-            </thead>
-            <tbody>
-              {report.results.flatMap((r) =>
-                r.missedHazards.map((m, i) => (
-                  <tr key={`${r.image}-${i}`}>
-                    <td>{r.image}</td>
-                    <td>{labelFor(m.concept)}</td>
-                    <td data-numeric>
-                      x {m.bbox.x.toFixed(2)} · y {m.bbox.y.toFixed(2)}
-                    </td>
-                    <td>Labelled hazard, never narrated.</td>
-                  </tr>
-                )),
-              )}
-              {report.results.every((r) => r.missedHazards.length === 0) && (
+          <div className="rg-table-wrap">
+            <table className="rg-table">
+              <caption>
+                Every ground-truth hazard with no matching prediction. This is the failure list, shown on
+                purpose.
+              </caption>
+              <thead>
                 <tr>
-                  <td colSpan={4}>No missed hazards in this run.</td>
+                  <th scope="col">Image</th>
+                  <th scope="col">Concept</th>
+                  <th scope="col">Location</th>
+                  <th scope="col">Why it matters</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {report.results.flatMap((r) =>
+                  r.missedHazards.map((m, i) => (
+                    <tr key={`${r.image}-${i}`}>
+                      <td data-label="Image">{r.image}</td>
+                      <td data-label="Concept">{labelFor(m.concept)}</td>
+                      <td data-label="Location" data-numeric>
+                        x {m.bbox.x.toFixed(2)} · y {m.bbox.y.toFixed(2)}
+                      </td>
+                      <td data-label="Why it matters">Labelled hazard, never narrated.</td>
+                    </tr>
+                  )),
+                )}
+                {report.results.every((r) => r.missedHazards.length === 0) && (
+                  <tr>
+                    <td colSpan={4}>No missed hazards in this run.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -215,6 +225,12 @@ export function EvalScreen() {
         </div>
         <div className="rg-panel-body">
           <ul className="rg-limits">
+            <li>
+              Live mode refreshes in sweeps: six separate SAM 3.1 calls, measured at roughly 1.6–2.2s each
+              (observed range 1.0–3.3s), four lanes at a time. A sweep takes 2.5–5.6s wall clock, and a 4s
+              coast follows it, so on-screen geometry can be up to ~10s old — roughly 13 m at walking pace.
+              Treat narration as a periodic scan, not a continuous sense.
+            </li>
             <li>
               Distance is a pinhole proxy from apparent size, so it is wrong whenever the class reference
               width is wrong. Flat ground objects are the worst case.
@@ -234,6 +250,10 @@ export function EvalScreen() {
           </ul>
         </div>
       </section>
+
+      <p className="rg-eyebrow">
+        Generated by <code>npm run eval</code> · no value on this page is hand-entered
+      </p>
     </div>
   );
 }

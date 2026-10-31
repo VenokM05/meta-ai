@@ -1,54 +1,68 @@
 /* ============================================================
    Room Guide — design tokens (single source of truth)
-   Aesthetic: OLED instrument panel / sonar. No raw hex in components.
-   All text pairs verified against WCAG AAA on --rg-surface-1 (#0E131C).
+
+   Identity: a field notebook for the dark. Warm graphite surfaces,
+   bone text, one signal-lime accent, and colour spent only on hazard
+   meaning. Every text pair below is verified against --rg-surface-1
+   at WCAG AAA for normal text; comments carry the measured ratio.
    ============================================================ */
 
 :root {
-  /* ---- Surfaces: near-black, slight blue cast, layered elevation ---- */
-  --rg-void: #04060a;
-  --rg-bg: #080b12;
-  --rg-surface-1: #0e131c;
-  --rg-surface-2: #151c27;
-  --rg-surface-3: #1e2735;
-  --rg-scrim: rgb(4 6 10 / 62%);
+  /* ---- Surfaces: warm graphite, deliberately not blue-black ---- */
+  --rg-void: #050604;
+  --rg-bg: #0a0b09;
+  --rg-surface-1: #101210;
+  --rg-surface-2: #161914;
+  --rg-surface-3: #1f231d;
+  --rg-scrim: rgb(5 6 4 / 74%);
+  --rg-glass: rgb(10 11 9 / 84%);
 
   /* ---- Lines ---- */
-  --rg-border: #26303f;
-  --rg-border-strong: #3a475c;
+  --rg-border: #2a2f28;
+  --rg-border-strong: #41473d;
 
-  /* ---- Text (contrast on --rg-surface-1) ---- */
-  --rg-text-1: #e8eff7; /* 15.1:1  AAA */
-  --rg-text-2: #a7b6c9; /*  8.4:1  AAA */
-  --rg-text-3: #8494a9; /*  4.9:1  AA   — non-essential labels only */
-
-  /* ---- Brand / system ---- */
-  --rg-accent: #34d1e0;
-  --rg-accent-ink: #04252a; /* text on accent fill: 8.1:1 */
-  --rg-accent-dim: rgb(52 209 224 / 16%);
+  /* ---- Text ---- */
+  --rg-text-1: #f2efe6; /* 16.4:1  AAA */
+  --rg-text-2: #c6c4b8; /* 10.8:1  AAA */
+  --rg-text-3: #a9a99b; /*  7.9:1  AAA */
 
   /*
-   * Hazard tiers. Colour is never the only carrier: each tier also has a glyph
-   * shape and a dash pattern, so the encoding survives greyscale and colour blindness.
-   */
-  --rg-critical: #ff6b6b; /* 6.0:1 */
-  --rg-caution: #ffc247; /* 11.2:1 */
-  --rg-informative: #4ade9e; /* 10.3:1 */
-  --rg-critical-fill: rgb(255 107 107 / 20%);
-  --rg-caution-fill: rgb(255 194 71 / 18%);
-  --rg-informative-fill: rgb(74 222 158 / 16%);
+    Signal lime belongs to the live loop: pulse, sweep, focus, primary action.
+    Keeping it off decorative chrome is what lets it mean "this is running".
+  */
+  --rg-accent: #d9f45b; /* 15.3:1 */
+  --rg-accent-soft: #e8ff8f;
+  --rg-accent-ink: #0a0c09; /* 16.1:1 on accent fill */
+  --rg-accent-dim: rgb(217 244 91 / 12%);
+  --rg-accent-line: rgb(217 244 91 / 30%);
 
-  /* ---- Typography ---- */
+  /*
+    Three tiers, three hues that survive red-green colour blindness:
+    coral / amber / sky. Shape and dash pattern carry the same distinction,
+    so the encoding still works in greyscale.
+  */
+  --rg-critical: #ff8a80; /*  8.2:1 */
+  --rg-caution: #ffc65c; /* 12.1:1 */
+  --rg-informative: #7fb6ff; /*  9.0:1 */
+  --rg-critical-fill: rgb(255 138 128 / 18%);
+  --rg-caution-fill: rgb(255 198 92 / 16%);
+  --rg-informative-fill: rgb(127 182 255 / 16%);
+
+  /* ---- Typography: serif voice, sans interface, mono evidence ---- */
+  --rg-font-display: "Newsreader", "Iowan Old Style", Georgia, serif;
   --rg-font-ui: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --rg-font-data: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
   --rg-text-xs: 0.75rem;
   --rg-text-sm: 0.875rem;
   --rg-text-base: 1rem;
   --rg-text-lg: 1.25rem;
-  --rg-text-xl: 1.625rem;
-  --rg-text-2xl: 2rem;
-  --rg-leading: 1.55;
-  --rg-tracking-label: 0.08em;
+  --rg-text-xl: 1.75rem;
+  --rg-text-2xl: 2.5rem;
+  --rg-text-display: clamp(2.75rem, 6vw, 5.5rem);
+  --rg-display-lh: 1.02;
+  --rg-leading: 1.6;
+  --rg-tracking-label: 0.14em;
+  --rg-tracking-tight: -0.02em;
 
   /* ---- Spacing: 4/8 rhythm ---- */
   --rg-sp-1: 4px;
@@ -59,27 +73,31 @@
   --rg-sp-6: 32px;
   --rg-sp-7: 48px;
   --rg-sp-8: 64px;
+  --rg-sp-9: 96px;
 
-  /* ---- Radii: tight, instrument-like ---- */
+  /* ---- Radii: editorial pages, instrument hardware ---- */
   --rg-r-1: 2px;
-  --rg-r-2: 4px;
-  --rg-r-3: 8px;
+  --rg-r-2: 5px;
+  --rg-r-3: 10px;
+  --rg-r-4: 16px;
   --rg-r-pill: 999px;
 
   /* ---- Elevation ---- */
-  --rg-shadow-1: 0 1px 2px rgb(0 0 0 / 40%);
-  --rg-shadow-2: 0 6px 20px rgb(0 0 0 / 45%);
-  --rg-glow: 0 0 10px rgb(52 209 224 / 45%);
+  --rg-shadow-1: 0 10px 30px rgb(0 0 0 / 32%);
+  --rg-shadow-2: 0 24px 64px rgb(0 0 0 / 52%);
+  --rg-glow: 0 0 0 1px var(--rg-accent-line);
 
   /* ---- Motion ---- */
-  --rg-fast: 150ms;
-  --rg-med: 220ms;
-  --rg-slow: 320ms;
-  --rg-ease-out: cubic-bezier(0.16, 0.84, 0.44, 1);
-  --rg-ease-in: cubic-bezier(0.4, 0, 0.66, 0.4);
+  --rg-fast: 140ms;
+  --rg-med: 260ms;
+  --rg-slow: 520ms;
+  --rg-ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --rg-ease-cinema: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* ---- Focus ---- */
-  --rg-focus-ring: 0 0 0 2px var(--rg-bg), 0 0 0 4px var(--rg-accent);
+  /* ---- Focus: a dark wall then lime, so it holds on any surface ---- */
+  --rg-focus-ring:
+    0 0 0 2px var(--rg-bg), 0 0 0 4px var(--rg-accent),
+    0 0 0 7px rgb(217 244 91 / 22%);
 
   /* ---- Layout ---- */
   --rg-z-base: 0;
@@ -89,8 +107,8 @@
   --rg-z-toast: 100;
   --rg-z-max: 1000;
 
-  --rg-rail-w: 244px;
-  --rg-sonar-w: 300px;
+  --rg-shell: 1480px;
+  --rg-gutter: clamp(16px, 2.4vw, 36px);
   --rg-hit-min: 44px;
 }
 
@@ -100,19 +118,26 @@ html[data-type-scale="large"] {
   --rg-text-sm: 1rem;
   --rg-text-base: 1.1875rem;
   --rg-text-lg: 1.5rem;
-  --rg-text-xl: 1.9375rem;
-  --rg-text-2xl: 2.375rem;
+  --rg-text-xl: 2.0625rem;
+  --rg-text-2xl: 2.875rem;
+  --rg-text-display: clamp(3rem, 6.5vw, 6rem);
 }
 
 /* High-contrast mode: pure black, heavier lines, no fills at rest. */
 html[data-contrast="high"] {
   --rg-bg: #000;
   --rg-surface-1: #000;
-  --rg-surface-2: #0a0a0a;
-  --rg-surface-3: #141414;
-  --rg-border: #6b7a8f;
+  --rg-surface-2: #0b0b0b;
+  --rg-surface-3: #161616;
+  --rg-glass: rgb(0 0 0 / 92%);
+  --rg-border: #7b8673;
+  --rg-border-strong: #a9b3a1;
   --rg-text-1: #fff;
-  --rg-text-2: #e2e8f0;
-  --rg-text-3: #cbd5e1;
-  --rg-accent: #6ee7f5;
+  --rg-text-2: #e9ece4;
+  --rg-text-3: #c9cec3;
+  --rg-accent: #eaff8a;
+  --rg-accent-dim: rgb(234 255 138 / 18%);
+  --rg-critical: #ff9c93;
+  --rg-caution: #ffd06e;
+  --rg-informative: #9cc9ff;
 }

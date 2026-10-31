@@ -14,54 +14,91 @@ function clock(ms: number): string {
 }
 
 /**
- * The ticker is the audit trail for the narration. Every line carries the reason it fired,
- * which turns a black-box demo into something a judge can interrogate.
+ * The teleprompter. It sits beside the image rather than on top of it: for a
+ * low-vision reader, a stable high-contrast column beats text over moving video.
  */
-export function NarrationTicker({
+export function NowSpeaking({
   activeLine,
-  history,
   running,
+  lineCount,
 }: {
   activeLine: NarrationLine | null;
-  history: NarrationLine[];
   running: boolean;
+  lineCount: number;
 }) {
   return (
-    <section className="rg-panel rg-ticker" aria-label="Narration">
-      <div className="rg-panel-head">
-        <h2 className="rg-panel-title">Spoken now</h2>
-        <span className="rg-chip">
-          <b data-numeric>{history.length}</b> lines
+    <section className="rg-now" aria-label="Spoken now">
+      <div className="rg-now-eyebrow">
+        <span className="rg-now-signal" data-on={running} aria-hidden="true" />
+        <span>{running ? "Spoken now" : "Paused"}</span>
+        <span className="rg-now-count" data-numeric>
+          {lineCount} {lineCount === 1 ? "line" : "lines"}
         </span>
       </div>
 
       {/* polite, not assertive: the screen reader must not be interrupted by ambient chatter. */}
-      <div className="rg-ticker-live" aria-live="polite" aria-busy={!running}>
-        <p className="rg-ticker-now">
+      <div className="rg-now-body" aria-live="polite" aria-busy={!running}>
+        <p className="rg-now-line">
           {activeLine ? activeLine.text : running ? "Listening. Nothing new to report." : "Not running."}
         </p>
         {activeLine && (
-          <div className="rg-ticker-meta">
+          <div className="rg-now-meta">
             <span className="rg-tag" data-tier={activeLine.tier}>
               {activeLine.tier}
             </span>
             <span className="rg-tag" data-tone="neutral">
               {TRIGGER_LABEL[activeLine.trigger]}
             </span>
-            <span className="rg-tag" data-tone="neutral">
+            <time className="rg-now-time" data-numeric>
               {clock(activeLine.timestampMs)}
-            </span>
+            </time>
           </div>
         )}
       </div>
+    </section>
+  );
+}
 
-      {history.length > 0 && (
-        <ul className="rg-history">
-          {history.slice(1, 9).map((line, i) => (
-            <li key={`${line.id}-${i}`}>
-              <time dateTime={undefined}>{clock(line.timestampMs)}</time>
+/**
+ * The audit trail. Every line carries the reason it fired, which turns a
+ * black-box demo into something a judge can interrogate.
+ */
+export function NarrationLog({
+  history,
+  activeId,
+}: {
+  history: NarrationLine[];
+  activeId?: string | null | undefined;
+}) {
+  const rows = activeId ? history.filter((line) => line.id !== activeId) : history;
+
+  return (
+    <section className="rg-panel rg-log" aria-label="Narration log">
+      <div className="rg-panel-head">
+        <h2 className="rg-panel-title">Narration log</h2>
+        <span className="rg-chip">
+          <b data-numeric>{history.length}</b> lines
+        </span>
+      </div>
+
+      {rows.length === 0 ? (
+        <p className="rg-log-empty">
+          {history.length > 0
+            ? "The current line is still the only one in this session."
+            : "No narration yet. Start the guide and every spoken line lands here with the reason it fired."}
+        </p>
+      ) : (
+        <ul className="rg-log-list">
+          {rows.map((line) => (
+            <li key={line.id}>
+              <time data-numeric>{clock(line.timestampMs)}</time>
               <TierGlyph tier={line.tier} />
-              <span>{line.text}</span>
+              <div className="rg-log-entry">
+                <span className="rg-log-text">{line.text}</span>
+                <span className="rg-log-meta" data-tier={line.tier}>
+                  {TRIGGER_LABEL[line.trigger]} · {line.tier}
+                </span>
+              </div>
             </li>
           ))}
         </ul>

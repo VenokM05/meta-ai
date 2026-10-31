@@ -31,13 +31,14 @@ export function FrameScreen() {
 
   return (
     <div className="rg-page">
-      <div className="rg-page-head">
+      <header className="rg-page-head">
+        <p className="rg-eyebrow">Mode 02 · one image, one description</p>
         <h1>Single frame</h1>
         <p>
           One image in, one description out. Nothing streams, nothing races a latency budget, and the
           narration is produced by the same geometry and language code the live guide uses.
         </p>
-      </div>
+      </header>
 
       <div className="rg-notice rg-notice--accent" role="note">
         <IconPlay />
@@ -47,67 +48,65 @@ export function FrameScreen() {
         </span>
       </div>
 
-      <div className="rg-grid-2">
-        <section className="rg-panel">
-          <div className="rg-panel-head">
-            <h2 className="rg-panel-title">Source</h2>
-          </div>
-          <div className="rg-panel-body">
-            <div className="rg-field">
-              <label htmlFor="frame-time">Scene moment</label>
-              <div className="rg-slider-row">
-                <input
-                  id="frame-time"
-                  type="range"
-                  min={0}
-                  max={33}
-                  step={1}
-                  value={Math.round(frameTime / 1000)}
-                  onChange={(e) => setFrameTime(Number(e.target.value) * 1000)}
-                />
-                <output htmlFor="frame-time" data-numeric className="rg-chip">
-                  {Math.round(frameTime / 1000)} s
-                </output>
-              </div>
-              <p className="rg-hint">
-                Drag to pick a different synthetic scene, then analyse it.
-              </p>
-            </div>
+      <div className="rg-hero">
+        <div className="rg-hero-media">
+          <CameraStage
+            objects={objects}
+            videoStream={null}
+            soundingConcepts={new Set()}
+            provider="mock"
+          />
+        </div>
 
-            <button
-              type="button"
-              className="rg-btn rg-btn--primary"
-              onClick={analyse}
-              disabled={busy}
-              style={{ marginTop: "var(--rg-sp-4)" }}
-            >
-              <span>{busy ? "Analysing…" : "Analyse frame"}</span>
-            </button>
-          </div>
-        </section>
-
-        <section className="rg-panel">
-          <div className="rg-panel-head">
-            <h2 className="rg-panel-title">Reading</h2>
-          </div>
-          <div className="rg-panel-body">
-            <p className="rg-ticker-now" aria-live="polite">
+        <aside className="rg-hero-side" aria-label="Frame analysis">
+          <section className="rg-reading" aria-label="Reading">
+            <p className="rg-eyebrow">Reading</p>
+            <p className="rg-reading-line" aria-live="polite">
               {analysed ? summarizeScene(objects) : "No frame analysed yet."}
             </p>
-            <p className="rg-hint" style={{ marginTop: "var(--rg-sp-3)" }}>
+            <p className="rg-hint">
               {VOCABULARY.length} concepts are promptable. Any object outside them is reported as untracked,
               never as absent.
             </p>
-          </div>
-        </section>
-      </div>
+          </section>
 
-      <CameraStage
-        objects={objects}
-        videoStream={null}
-        soundingConcepts={new Set()}
-        provider="mock"
-      />
+          <section className="rg-panel" aria-label="Source">
+            <div className="rg-panel-head">
+              <h2 className="rg-panel-title">Source</h2>
+            </div>
+            <div className="rg-panel-body">
+              <div className="rg-field">
+                <label htmlFor="frame-time">Scene moment</label>
+                <div className="rg-slider-row">
+                  <input
+                    id="frame-time"
+                    type="range"
+                    min={0}
+                    max={33}
+                    step={1}
+                    value={Math.round(frameTime / 1000)}
+                    onChange={(e) => setFrameTime(Number(e.target.value) * 1000)}
+                  />
+                  <output htmlFor="frame-time" data-numeric className="rg-chip">
+                    {Math.round(frameTime / 1000)} s
+                  </output>
+                </div>
+                <p className="rg-hint">Drag to pick a different synthetic scene, then analyse it.</p>
+              </div>
+
+              <button
+                type="button"
+                className="rg-btn rg-btn--primary"
+                onClick={analyse}
+                disabled={busy}
+                style={{ marginTop: "var(--rg-sp-4)", width: "100%" }}
+              >
+                <span>{busy ? "Analysing…" : "Analyse frame"}</span>
+              </button>
+            </div>
+          </section>
+        </aside>
+      </div>
 
       {analysed && <SonarMap objects={objects} soundingConcepts={new Set()} />}
     </div>

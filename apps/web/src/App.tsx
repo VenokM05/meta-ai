@@ -38,7 +38,7 @@ export function App() {
       <TopBar
         route={route}
         onNavigate={navigate}
-        provider="mock"
+        provider={guide.provider}
         fps={guide.stats.fps}
         latencyMs={guide.stats.latencyMs}
       />
@@ -48,6 +48,11 @@ export function App() {
         {route === "frame" && <FrameScreen />}
         {route === "quality" && <EvalScreen />}
       </main>
+
+      <footer className="rg-foot">
+        <span>Room Guide · built on Meta SAM 3.1</span>
+        <span>Geometry turned into speech. Absence is never asserted.</span>
+      </footer>
     </div>
   );
 }

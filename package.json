@@ -9,7 +9,9 @@
   ],
   "scripts": {
     "dev": "npm run dev -w @roomguide/web",
-    "build": "npm run build -w @roomguide/core && npm run build -w @roomguide/web",
+    "dev:proxy": "npm run dev -w @roomguide/proxy",
+    "dev:all": "npm run dev:proxy & npm run dev",
+    "build": "npm run build -w @roomguide/web",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b packages/core apps/web",
