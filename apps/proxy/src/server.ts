@@ -10,7 +10,7 @@
  * this port can spend your quota, so the defaults are deliberately hostile:
  *
  * - binds 127.0.0.1 only; refuses any other interface unless ALLOW_PUBLIC=1 is set
- * - accepts only POST /api/segment and GET /healthz
+ * - accepts only POST /api/segment and GET /healthz (also /api/healthz through the Vite prefix)
  * - one concept per request, length-capped, control characters rejected
  * - request body capped, upstream timeout enforced, in-flight requests capped
  * - the key is never logged, echoed, or included in any response
@@ -180,7 +180,9 @@ async function handleSegment(req: IncomingMessage, res: ServerResponse): Promise
 const server = createServer((req, res) => {
   const url = req.url ?? "";
 
-  if (req.method === "GET" && url === "/healthz") {
+  // The browser reaches the proxy through the Vite /api prefix, so the probe needs both
+  // names: /api/healthz from the app, /healthz when the proxy is addressed directly.
+  if (req.method === "GET" && (url === "/healthz" || url === "/api/healthz")) {
     json(res, 200, { ok: true, configured: apiKey.length > 0, inFlight });
     return;
   }
@@ -189,7 +191,7 @@ const server = createServer((req, res) => {
     // Dev only: Vite proxies /api so the browser sees one origin, but a separately hosted
     // proxy still needs these for the preflight.
     res.writeHead(204, {
-      allow: "POST /api/segment, GET /healthz",
+      allow: "POST /api/segment, GET /healthz, GET /api/healthz",
       "access-control-allow-origin": String(process.env.ALLOWED_ORIGIN ?? "http://localhost:5173"),
       "access-control-allow-methods": "POST, GET, OPTIONS",
       "access-control-allow-headers": "content-type",

@@ -80,6 +80,14 @@ export interface ConceptOutcome {
   latencyMs: number;
 }
 
+interface SegmentResponse {
+  ok?: boolean;
+  text?: string;
+  error?: string;
+  status?: number;
+  latencyMs?: number;
+}
+
 async function segmentOne(
   concept: string,
   frame: FrameGrab,
@@ -95,13 +103,31 @@ async function segmentOne(
       signal,
     });
 
-    const body = (await res.json()) as {
-      ok?: boolean;
-      text?: string;
-      error?: string;
-      status?: number;
-      latencyMs?: number;
-    };
+    const contentType = res.headers.get("content-type") ?? "";
+    if (!contentType.includes("json")) {
+      // A static host answers a missing /api route with an HTML or text page. Parsing that as
+      // JSON throws a SyntaxError whose name would reach the user as "syntaxerror".
+      return {
+        concept,
+        ok: false,
+        detections: [],
+        error: "no_proxy",
+        latencyMs: Math.round(performance.now() - startedAt),
+      };
+    }
+
+    let body: SegmentResponse;
+    try {
+      body = JSON.parse(await res.text()) as SegmentResponse;
+    } catch {
+      return {
+        concept,
+        ok: false,
+        detections: [],
+        error: "bad_response",
+        latencyMs: Math.round(performance.now() - startedAt),
+      };
+    }
 
     if (!res.ok || body.ok !== true) {
       return {

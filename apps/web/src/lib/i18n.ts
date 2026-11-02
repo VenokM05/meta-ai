@@ -338,6 +338,7 @@ export interface GuideStrings {
   cameraBusy: string;
   cameraMissing: string;
   cameraInsecure: string;
+  cameraNoProxy: string;
   syntheticNotice: string;
   nothingToRepeat: string;
   narrationSpeechOn: string;
@@ -352,6 +353,8 @@ export interface GuideStrings {
   degradedProxy: string;
   degradedTimeout: (seconds: number) => string;
   degradedAborted: string;
+  degradedNoProxy: string;
+  degradedUnreachable: string;
   degradedUnavailable: (reason: string) => string;
   partialFailure: (labels: string) => string;
 
@@ -476,6 +479,8 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraMissing: "No camera was found on this device.",
     cameraInsecure:
       "The camera needs a secure page. Open the HTTPS link, not a local network address.",
+    cameraNoProxy:
+      "The camera cannot be analysed on this site because the live model is not connected here. The synthetic scene keeps playing. Run the guide locally with the proxy to scan with your camera.",
     syntheticNotice: "Synthetic scene, not your camera. Use my camera to scan your room.",
     nothingToRepeat: "Nothing to repeat yet.",
     narrationSpeechOn: "Automatic narration on.",
@@ -501,6 +506,10 @@ export const UI: Record<Locale, GuideStrings> = {
     degradedTimeout: (s) =>
       `SAM 3.1 did not answer within ${s}s. Narration is paused — the geometry on screen is stale.`,
     degradedAborted: "The live sweep was cancelled. Narration is paused until a sweep completes.",
+    degradedNoProxy:
+      "Live segmentation is not available on this site. Narration pauses instead of guessing about a room it cannot see.",
+    degradedUnreachable:
+      "The live segmenter stopped answering. Narration pauses rather than guess about a room it cannot see.",
     degradedUnavailable: (reason) =>
       `Segmentation is unavailable (${reason}). Narration is paused rather than guessed.`,
     partialFailure: (labels) =>
@@ -641,6 +650,8 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraMissing: "No se encontró ninguna cámara en este dispositivo.",
     cameraInsecure:
       "La cámara necesita una página segura. Abra el enlace HTTPS, no una dirección de red local.",
+    cameraNoProxy:
+      "La cámara no se puede analizar en este sitio porque el modelo en vivo no está conectado aquí. La escena sintética sigue reproduciéndose. Ejecute la guía localmente con el proxy para escanear con su cámara.",
     syntheticNotice:
       "Escena sintética, no su cámara. Use Mi cámara para escanear su habitación.",
     nothingToRepeat: "Aún no hay nada que repetir.",
@@ -667,6 +678,10 @@ export const UI: Record<Locale, GuideStrings> = {
     degradedTimeout: (s) =>
       `SAM 3.1 no respondió en ${s} s. La narración está en pausa; la geometría en pantalla está desactualizada.`,
     degradedAborted: "El barrido en vivo se canceló. La narración está en pausa hasta que termine un barrido.",
+    degradedNoProxy:
+      "La segmentación en vivo no está disponible en este sitio. La narración se detiene en lugar de adivinar sobre una habitación que no puede ver.",
+    degradedUnreachable:
+      "El segmentador en vivo dejó de responder. La narración se detiene en lugar de adivinar sobre una habitación que no puede ver.",
     degradedUnavailable: (reason) =>
       `La segmentación no está disponible (${reason}). La narración se pausa en vez de adivinar.`,
     partialFailure: (labels) =>
@@ -807,6 +822,8 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraMissing: "Aucune caméra n'a été trouvée sur cet appareil.",
     cameraInsecure:
       "La caméra nécessite une page sécurisée. Ouvrez le lien HTTPS, pas une adresse de réseau local.",
+    cameraNoProxy:
+      "La caméra ne peut pas être analysée sur ce site, car le modèle en direct n'y est pas connecté. La scène synthétique continue. Lancez le guide en local avec le proxy pour analyser avec votre caméra.",
     syntheticNotice:
       "Scène synthétique, pas votre caméra. Utilisez Ma caméra pour analyser votre pièce.",
     nothingToRepeat: "Rien à répéter pour le moment.",
@@ -833,6 +850,10 @@ export const UI: Record<Locale, GuideStrings> = {
     degradedTimeout: (s) =>
       `SAM 3.1 n'a pas répondu en ${s} s. La narration est en pause ; la géométrie affichée est périmée.`,
     degradedAborted: "L'analyse en direct a été annulée. La narration est en pause jusqu'à la prochaine analyse.",
+    degradedNoProxy:
+      "La segmentation en direct n'est pas disponible sur ce site. La narration s'arrête au lieu de deviner une pièce qu'elle ne peut pas voir.",
+    degradedUnreachable:
+      "Le segmentateur en direct ne répond plus. La narration s'arrête au lieu de deviner une pièce qu'elle ne peut pas voir.",
     degradedUnavailable: (reason) =>
       `La segmentation est indisponible (${reason}). La narration est mise en pause plutôt que devinée.`,
     partialFailure: (labels) =>
@@ -973,6 +994,8 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraMissing: "Não foi encontrada nenhuma câmara neste dispositivo.",
     cameraInsecure:
       "A câmara precisa de uma página segura. Abra a ligação HTTPS, não um endereço de rede local.",
+    cameraNoProxy:
+      "A câmara não pode ser analisada neste site porque o modelo em direto não está ligado aqui. A cena sintética continua. Execute o guia localmente com o proxy para analisar com a sua câmara.",
     syntheticNotice:
       "Cena sintética, não a sua câmara. Use A minha câmara para analisar a sua sala.",
     nothingToRepeat: "Ainda não há nada para repetir.",
@@ -999,6 +1022,10 @@ export const UI: Record<Locale, GuideStrings> = {
     degradedTimeout: (s) =>
       `SAM 3.1 não respondeu em ${s} s. A narração está pausada; a geometria na tela está desatualizada.`,
     degradedAborted: "A varredura ao vivo foi cancelada. A narração fica pausada até uma varredura terminar.",
+    degradedNoProxy:
+      "A segmentação em direto não está disponível neste site. A narração pára em vez de adivinhar sobre uma sala que não consegue ver.",
+    degradedUnreachable:
+      "O segmentador em direto deixou de responder. A narração pára em vez de adivinhar sobre uma sala que não consegue ver.",
     degradedUnavailable: (reason) =>
       `A segmentação está indisponível (${reason}). A narração pausa em vez de adivinhar.`,
     partialFailure: (labels) =>
@@ -1139,6 +1166,8 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraMissing: "Auf diesem Gerät wurde keine Kamera gefunden.",
     cameraInsecure:
       "Die Kamera benötigt eine sichere Seite. Öffnen Sie den HTTPS-Link, keine lokale Netzwerkadresse.",
+    cameraNoProxy:
+      "Die Kamera kann auf dieser Seite nicht ausgewertet werden, weil das Live-Modell hier nicht verbunden ist. Die synthetische Szene läuft weiter. Starten Sie den Guide lokal mit dem Proxy, um mit Ihrer Kamera zu scannen.",
     syntheticNotice:
       "Synthetische Szene, nicht Ihre Kamera. Verwenden Sie Meine Kamera, um Ihren Raum zu erfassen.",
     nothingToRepeat: "Es gibt noch nichts zu wiederholen.",
@@ -1165,6 +1194,10 @@ export const UI: Record<Locale, GuideStrings> = {
     degradedTimeout: (s) =>
       `SAM 3.1 hat nicht innerhalb von ${s} s geantwortet. Die Erzählung ist pausiert – die Geometrie auf dem Bildschirm ist veraltet.`,
     degradedAborted: "Der Live-Scan wurde abgebrochen. Die Erzählung pausiert, bis ein Scan abgeschlossen ist.",
+    degradedNoProxy:
+      "Die Live-Segmentierung ist auf dieser Seite nicht verfügbar. Die Erzählung pausiert, statt über einen Raum zu raten, den sie nicht sehen kann.",
+    degradedUnreachable:
+      "Die Live-Segmentierung antwortet nicht mehr. Die Erzählung pausiert, statt über einen Raum zu raten, den sie nicht sehen kann.",
     degradedUnavailable: (reason) =>
       `Segmentierung ist nicht verfügbar (${reason}). Die Erzählung pausiert, statt zu raten.`,
     partialFailure: (labels) =>

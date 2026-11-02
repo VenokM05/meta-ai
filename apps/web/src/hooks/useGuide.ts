@@ -58,13 +58,36 @@ const SWEEP_CONCURRENCY = 4;
 const LIVE_SWEEP_INTERVAL_MS = 4_000;
 
 /**
- * Geometry older than this is outside the loop's normal worst case (~10s), so the guide
+ * Geometry older than this is outside the loop's normal worst case (~11s), so the guide
  * says so once rather than letting old observations sound current.
  */
 export const STALE_AFTER_MS = 12_000;
 
 /** How long a freshly started live loop waits for its first sweep before flagging it. */
 const FIRST_SWEEP_GRACE_MS = 6_000;
+
+/** A camera whose frames cannot be analysed is worse than no camera, so check first. */
+const LIVE_PROBE_MS = 2_500;
+
+/**
+ * Ask the proxy whether it is present and has a key before opening a camera. The hosted
+ * build has no /api route, and opening the camera anyway would narrate a synthetic scene
+ * while the user believes their own room is being scanned.
+ */
+async function liveProxyReady(): Promise<boolean> {
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), LIVE_PROBE_MS);
+  try {
+    const res = await fetch("/api/healthz", { signal: controller.signal, cache: "no-store" });
+    if (!res.ok) return false;
+    const body = (await res.json()) as { ok?: boolean; configured?: boolean };
+    return body.ok === true && body.configured !== false;
+  } catch {
+    return false;
+  } finally {
+    window.clearTimeout(timer);
+  }
+}
 
 export interface GuideStats {
   fps: number;
@@ -532,6 +555,11 @@ export function useGuide() {
       cue("ready");
       return;
     }
+    const t = UI[prefsRef.current.locale];
+    if (!(await liveProxyReady())) {
+      setCameraError(t.cameraNoProxy);
+      return;
+    }
     try {
       const s = await navigator.mediaDevices.getUserMedia({
         video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "environment" },
@@ -545,7 +573,6 @@ export function useGuide() {
       // The degraded notice speaks this, so it is not duplicated here. The failure names
       // differ by cause, and each one has a different recovery step for the user.
       const name = error instanceof DOMException ? error.name : "";
-      const t = UI[prefsRef.current.locale];
       const message = !window.isSecureContext
         ? t.cameraInsecure
         : name === "NotAllowedError" || name === "SecurityError"
@@ -704,6 +731,8 @@ export function useGuide() {
         return t.degradedTimeout(Math.round(SWEEP_BUDGET_MS / 1000));
       }
       if (reason === "aborterror") return t.degradedAborted;
+      if (reason === "no_proxy" || reason === "bad_response") return t.degradedNoProxy;
+      if (reason === "typeerror" || reason === "networkerror") return t.degradedUnreachable;
       return t.degradedUnavailable(reason);
     }
     return cameraError;
