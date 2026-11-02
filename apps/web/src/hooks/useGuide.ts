@@ -561,8 +561,19 @@ export function useGuide() {
       return;
     }
     try {
+      // A phone held upright should see the frame the user is looking at, not a landscape
+      // crop of it. Asking for 9:16 lets the browser rotate or crop to portrait; the stage
+      // then follows whatever aspect the stream actually delivers.
+      const phonePortrait = window.matchMedia("(orientation: portrait) and (max-width: 760px)").matches;
       const s = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "environment" },
+        video: phonePortrait
+          ? {
+              width: { ideal: 720 },
+              height: { ideal: 1280 },
+              aspectRatio: { ideal: 9 / 16 },
+              facingMode: "environment",
+            }
+          : { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "environment" },
         audio: false,
       });
       setStream(s);

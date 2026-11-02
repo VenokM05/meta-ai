@@ -2276,6 +2276,17 @@ main:focus {
     padding-top: max(var(--rg-sp-2), env(safe-area-inset-top));
   }
 
+  /*
+    A phone held upright gets a portrait stage at nearly full width. The ratio comes from
+    the stream itself, so the video fills the box exactly and the mask overlay stays
+    registered to it. The height cap keeps the spoken line and dock reachable on short
+    screens without ever changing the ratio.
+  */
+  .rg-camera[data-portrait="true"] {
+    width: min(100%, calc((100dvh - 240px) * var(--rg-camera-ratio, 0.5625)));
+    margin-inline: auto;
+  }
+
   /* Keyboard hints are dead weight on a touch-only screen. */
   .rg-shortcut-note {
     display: none;

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import type { SpatialObject } from "@roomguide/core";
 import { UI, conceptLabel, type Locale } from "../lib/i18n";
@@ -63,21 +63,46 @@ export function CameraStage({
   const videoRef = externalRef ?? localRef;
   const t = UI[locale];
 
+  const [aspect, setAspect] = useState<number | null>(null);
+
   useEffect(() => {
+    if (!videoStream) {
+      setAspect(null);
+      return;
+    }
     const el = videoRef.current;
     if (!el) return;
-    if (videoStream) {
-      el.srcObject = videoStream;
-      void el.play().catch(() => undefined);
-    } else {
-      el.srcObject = null;
-    }
+    el.srcObject = videoStream;
+    void el.play().catch(() => undefined);
+
+    // The stage has to match the stream's own aspect: masks are stretched over the same
+    // box, so an assumed 16:9 on a portrait stream would slide every mask off the video.
+    const sync = () => {
+      if (el.videoWidth > 0 && el.videoHeight > 0) setAspect(el.videoWidth / el.videoHeight);
+    };
+    sync();
+    el.addEventListener("loadedmetadata", sync);
+    el.addEventListener("resize", sync);
+    return () => {
+      el.removeEventListener("loadedmetadata", sync);
+      el.removeEventListener("resize", sync);
+    };
   }, [videoStream, videoRef]);
+
+  const portrait = aspect !== null && aspect < 1;
 
   const corridorApexY = 28;
 
   return (
-    <div className="rg-camera" data-provider={provider}>
+    <div
+      className="rg-camera"
+      data-provider={provider}
+      data-portrait={portrait ? "true" : undefined}
+      style={{
+        aspectRatio: aspect ? `${aspect}` : undefined,
+        ["--rg-camera-ratio" as string]: aspect ? `${aspect}` : undefined,
+      }}
+    >
       {videoStream ? <video ref={videoRef} playsInline muted autoPlay /> : <SyntheticBackdrop />}
 
       <svg
