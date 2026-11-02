@@ -62,7 +62,7 @@ export function TopBar({
           title={
             provider === "mock"
               ? "Synthetic scene fixtures, not camera input"
-              : "Live camera feeding SAM 3.1 through the local proxy"
+              : "Live camera feeding SAM 3.1 through the server-side segmenter"
           }
         >
           {provider === "mock" ? (

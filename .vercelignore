@@ -1,0 +1,2 @@
+# Tests are not routes. Vercel turns every file under api/ into a function.
+api/test

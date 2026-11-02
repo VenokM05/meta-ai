@@ -78,6 +78,17 @@ Mock mode needs no key and no proxy: synthetic scenes exercise the same geometry
 narration, sonification, and metric paths. The header says `Synthetic` for exactly that
 reason, and no latency figure is shown because no model call happens.
 
+### Hosted
+
+`api/` holds the same endpoint as Vercel Node functions, so the deployed link can use a real
+camera without a laptop in the room. Set `META_API_KEY` in the Vercel project's environment
+variables (Production and Preview) and redeploy. Never `VITE_META_API_KEY`: Vite inlines
+`VITE_*` into the shipped bundle.
+
+The app probes `GET /api/healthz` before opening a camera. A host whose segmenter is missing
+or has no key keeps the camera closed and says so, rather than narrating the synthetic scene
+while a user believes their own room is being scanned.
+
 ### Operating it without sight
 
 The interface is built to be used with the screen off:
@@ -130,8 +141,8 @@ prunes assets from earlier builds.
 | `npm run dev` | Vite dev server |
 | `npm run dev:proxy` | Credential proxy on loopback |
 | `npm run dev:all` | Both, proxy in the background |
-| `npm test` | 48 unit tests across core |
-| `npm run typecheck` | Core + web |
+| `npm test` | 56 unit tests across core and the hosted handler |
+| `npm run typecheck` | Core, web, and hosted functions |
 | `npm run build` | Type-check and production Vite build |
 | `npm run eval` | Regenerate `apps/web/public/eval-report.json` |
 
@@ -145,24 +156,36 @@ apps/web          React 19 + Vite. Instrument-panel UI, camera capture,
 apps/proxy        Dependency-free Node server. Holds the only copy of the key,
                   validates concepts and image data URLs, caps body size and
                   in-flight requests.
+api               The same endpoint as Vercel Node functions, reading the key
+                  from runtime env. Same-origin check, per-IP budget, body and
+                  concurrency caps. Tests live in api/test.
 eval              Scene fixtures and report generation for the Quality page.
 ```
 
 ### Credential boundary
 
-A browser SPA cannot call the Meta API without shipping the key to every visitor. The proxy
-exists so it does not:
+A browser SPA cannot call the Meta API without shipping the key to every visitor. Two
+server-side boundaries exist so it does not:
 
-- binds `127.0.0.1` by default and refuses a public bind unless `ALLOW_PUBLIC=1`;
-- accepts only `POST /api/segment` and `GET /healthz`;
-- rejects image URLs that are not `data:image/...`, which blocks the obvious SSRF shape;
-- caps body size, concept length, upstream timeout, and concurrent requests;
-- never logs or returns the key, and does not forward upstream error bodies.
+- **Local proxy** (`apps/proxy`, default): binds `127.0.0.1` and refuses a public bind unless
+  `ALLOW_PUBLIC=1`; accepts only `POST /api/segment` and `GET /healthz` (plus the
+  `/api/healthz` probe path); rejects image URLs that are not `data:image/...`, which blocks
+  the obvious SSRF shape; caps body size, concept length, upstream timeout, and concurrent
+  requests.
+- **Hosted functions** (`api/`, Vercel): read the key from runtime environment variables and
+  accept only same-Origin requests. Each IP gets a per-minute request budget, and each
+  instance caps concurrent calls. These limits are best effort: serverless instances do not
+  share memory, so a distributed caller sees a looser limit than one tab does.
+
+Both never log or return the key, and neither forwards upstream error bodies.
 
 `ALLOW_PUBLIC=1` is a loaded gun: an unauthenticated public proxy is a spend button for the
-API key. Put authentication and TLS in front of it or leave it on loopback.
+API key. Put authentication and TLS in front of it or leave it on loopback. The hosted
+functions are intentionally a smaller version of that risk — public by design, bounded by the
+caps above, and limited to the demo window.
 
-The key was shared during development and should be rotated after the hackathon.
+The key was shared during development and should be rotated after the hackathon; rotate it
+regardless of how the hosted functions behave.
 
 ## Quality page
 
@@ -186,6 +209,8 @@ fixtures with hand-labelled photographs is the next step before any accuracy cla
   changes that.
 - **Not tested with low-vision users yet.** Until it is, every claim about real-world
   usefulness is a hypothesis.
+- **The hosted demo is a public relay.** Its caps bound abuse, not eliminate it. Quota can be
+  spent by anyone who finds the link until the key is rotated.
 - **Translations are unreviewed.** Spanish, French, Portuguese, and German were written to
   match the English wording, not by native speakers or with assistive-tech users. Treat the
   non-English narration as a draft until someone who uses a screen reader in that language

@@ -480,7 +480,7 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraInsecure:
       "The camera needs a secure page. Open the HTTPS link, not a local network address.",
     cameraNoProxy:
-      "The camera cannot be analysed on this site because the live model is not connected here. The synthetic scene keeps playing. Run the guide locally with the proxy to scan with your camera.",
+      "The camera cannot be analysed right now because the live model is not reachable from this site. The synthetic scene keeps playing.",
     syntheticNotice: "Synthetic scene, not your camera. Use my camera to scan your room.",
     nothingToRepeat: "Nothing to repeat yet.",
     narrationSpeechOn: "Automatic narration on.",
@@ -502,7 +502,7 @@ export const UI: Record<Locale, GuideStrings> = {
     screenReaderOff: "Screen reader mode off. The guide speaks again.",
     languageSpeech: (label) => `Language: ${label}. The guide will speak ${label}.`,
     degradedProxy:
-      "Live mode is on but no sweep has completed. Is the proxy running on port 8787?",
+      "Live mode is on but no sweep has completed. The live model may be unreachable.",
     degradedTimeout: (s) =>
       `SAM 3.1 did not answer within ${s}s. Narration is paused — the geometry on screen is stale.`,
     degradedAborted: "The live sweep was cancelled. Narration is paused until a sweep completes.",
@@ -651,7 +651,7 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraInsecure:
       "La cámara necesita una página segura. Abra el enlace HTTPS, no una dirección de red local.",
     cameraNoProxy:
-      "La cámara no se puede analizar en este sitio porque el modelo en vivo no está conectado aquí. La escena sintética sigue reproduciéndose. Ejecute la guía localmente con el proxy para escanear con su cámara.",
+      "La cámara no se puede analizar ahora mismo porque no se puede acceder al modelo en vivo desde este sitio. La escena sintética sigue reproduciéndose.",
     syntheticNotice:
       "Escena sintética, no su cámara. Use Mi cámara para escanear su habitación.",
     nothingToRepeat: "Aún no hay nada que repetir.",
@@ -674,7 +674,7 @@ export const UI: Record<Locale, GuideStrings> = {
     screenReaderOff: "Modo lector de pantalla desactivado. La guía vuelve a hablar.",
     languageSpeech: (label) => `Idioma: ${label}. La guía hablará en ${label}.`,
     degradedProxy:
-      "El modo en vivo está activo pero ningún barrido ha terminado. ¿Está el proxy en el puerto 8787?",
+      "El modo en vivo está activo pero ningún barrido se ha completado. Puede que el modelo en vivo no sea accesible.",
     degradedTimeout: (s) =>
       `SAM 3.1 no respondió en ${s} s. La narración está en pausa; la geometría en pantalla está desactualizada.`,
     degradedAborted: "El barrido en vivo se canceló. La narración está en pausa hasta que termine un barrido.",
@@ -823,7 +823,7 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraInsecure:
       "La caméra nécessite une page sécurisée. Ouvrez le lien HTTPS, pas une adresse de réseau local.",
     cameraNoProxy:
-      "La caméra ne peut pas être analysée sur ce site, car le modèle en direct n'y est pas connecté. La scène synthétique continue. Lancez le guide en local avec le proxy pour analyser avec votre caméra.",
+      "La caméra ne peut pas être analysée pour le moment, car le modèle en direct est inaccessible depuis ce site. La scène synthétique continue.",
     syntheticNotice:
       "Scène synthétique, pas votre caméra. Utilisez Ma caméra pour analyser votre pièce.",
     nothingToRepeat: "Rien à répéter pour le moment.",
@@ -846,7 +846,7 @@ export const UI: Record<Locale, GuideStrings> = {
     screenReaderOff: "Mode lecteur d'écran désactivé. Le guide parle de nouveau.",
     languageSpeech: (label) => `Langue : ${label}. Le guide parlera en ${label}.`,
     degradedProxy:
-      "Le mode direct est actif mais aucune analyse n'est terminée. Le proxy tourne-t-il sur le port 8787 ?",
+      "Le mode direct est actif mais aucune analyse n'est terminée. Le modèle en direct est peut-être inaccessible.",
     degradedTimeout: (s) =>
       `SAM 3.1 n'a pas répondu en ${s} s. La narration est en pause ; la géométrie affichée est périmée.`,
     degradedAborted: "L'analyse en direct a été annulée. La narration est en pause jusqu'à la prochaine analyse.",
@@ -995,7 +995,7 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraInsecure:
       "A câmara precisa de uma página segura. Abra a ligação HTTPS, não um endereço de rede local.",
     cameraNoProxy:
-      "A câmara não pode ser analisada neste site porque o modelo em direto não está ligado aqui. A cena sintética continua. Execute o guia localmente com o proxy para analisar com a sua câmara.",
+      "A câmara não pode ser analisada neste momento porque o modelo em direto não está acessível a partir deste site. A cena sintética continua.",
     syntheticNotice:
       "Cena sintética, não a sua câmara. Use A minha câmara para analisar a sua sala.",
     nothingToRepeat: "Ainda não há nada para repetir.",
@@ -1018,7 +1018,7 @@ export const UI: Record<Locale, GuideStrings> = {
     screenReaderOff: "Modo leitor de tela desativado. O guia fala novamente.",
     languageSpeech: (label) => `Idioma: ${label}. O guia falará em ${label}.`,
     degradedProxy:
-      "O modo ao vivo está ativo, mas nenhuma varredura terminou. O proxy está rodando na porta 8787?",
+      "O modo ao vivo está ativo, mas nenhuma varredura terminou. O modelo em direto pode estar inacessível.",
     degradedTimeout: (s) =>
       `SAM 3.1 não respondeu em ${s} s. A narração está pausada; a geometria na tela está desatualizada.`,
     degradedAborted: "A varredura ao vivo foi cancelada. A narração fica pausada até uma varredura terminar.",
@@ -1167,7 +1167,7 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraInsecure:
       "Die Kamera benötigt eine sichere Seite. Öffnen Sie den HTTPS-Link, keine lokale Netzwerkadresse.",
     cameraNoProxy:
-      "Die Kamera kann auf dieser Seite nicht ausgewertet werden, weil das Live-Modell hier nicht verbunden ist. Die synthetische Szene läuft weiter. Starten Sie den Guide lokal mit dem Proxy, um mit Ihrer Kamera zu scannen.",
+      "Die Kamera kann gerade nicht ausgewertet werden, weil das Live-Modell von dieser Seite aus nicht erreichbar ist. Die synthetische Szene läuft weiter.",
     syntheticNotice:
       "Synthetische Szene, nicht Ihre Kamera. Verwenden Sie Meine Kamera, um Ihren Raum zu erfassen.",
     nothingToRepeat: "Es gibt noch nichts zu wiederholen.",
@@ -1190,7 +1190,7 @@ export const UI: Record<Locale, GuideStrings> = {
     screenReaderOff: "Screenreader-Modus aus. Der Guide spricht wieder.",
     languageSpeech: (label) => `Sprache: ${label}. Der Guide spricht ${label}.`,
     degradedProxy:
-      "Der Live-Modus ist an, aber kein Scan wurde abgeschlossen. Läuft der Proxy auf Port 8787?",
+      "Der Live-Modus ist an, aber kein Scan wurde abgeschlossen. Das Live-Modell ist möglicherweise nicht erreichbar.",
     degradedTimeout: (s) =>
       `SAM 3.1 hat nicht innerhalb von ${s} s geantwortet. Die Erzählung ist pausiert – die Geometrie auf dem Bildschirm ist veraltet.`,
     degradedAborted: "Der Live-Scan wurde abgebrochen. Die Erzählung pausiert, bis ein Scan abgeschlossen ist.",
