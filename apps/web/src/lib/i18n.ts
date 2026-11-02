@@ -286,6 +286,9 @@ export interface GuideStrings {
   aimCoach: string;
   stopAiming: string;
   aimTitle: string;
+  mirrorOn: string;
+  mirrorOff: string;
+  mirrorTitle: string;
   help: string;
   resetSession: string;
   close: string;
@@ -349,6 +352,8 @@ export interface GuideStrings {
   nothingToRepeat: string;
   narrationSpeechOn: string;
   narrationSpeechOff: string;
+  mirrorSpeechOn: string;
+  mirrorSpeechOff: string;
   detailSpoken: Record<DetailLevel, string>;
   speedSpoken: Record<SpeechSpeed, string>;
   earconsOnSpeech: string;
@@ -418,6 +423,10 @@ export const UI: Record<Locale, GuideStrings> = {
     aimCoach: "Aim coach",
     stopAiming: "Stop aiming",
     aimTitle: "Level the phone with orientation tones. Needs the camera and a device with motion sensors.",
+    mirrorOn: "Mirror on",
+    mirrorOff: "Mirror off",
+    mirrorTitle:
+      "Flip the camera preview like a selfie view. Spoken directions still follow the real room.",
     help: "Help",
     resetSession: "Reset session",
     close: "Close",
@@ -495,6 +504,9 @@ export const UI: Record<Locale, GuideStrings> = {
     nothingToRepeat: "Nothing to repeat yet.",
     narrationSpeechOn: "Automatic narration on.",
     narrationSpeechOff: "Automatic narration off. Describe, repeat, and help still speak.",
+    mirrorSpeechOn:
+      "Mirror on. The preview is flipped; spoken directions still follow the real room.",
+    mirrorSpeechOff: "Mirror off. The preview follows the camera.",
     detailSpoken: {
       critical: "Detail: critical only.",
       caution: "Detail: critical and caution.",
@@ -584,6 +596,10 @@ export const UI: Record<Locale, GuideStrings> = {
     aimCoach: "Guía de puntería",
     stopAiming: "Detener puntería",
     aimTitle: "Nivela el teléfono con tonos de orientación. Necesita la cámara y sensores de movimiento.",
+    mirrorOn: "Espejo activado",
+    mirrorOff: "Espejo desactivado",
+    mirrorTitle:
+      "Invierte la vista previa como una selfi. Las indicaciones habladas siguen el espacio real.",
     help: "Ayuda",
     resetSession: "Reiniciar sesión",
     close: "Cerrar",
@@ -671,6 +687,9 @@ export const UI: Record<Locale, GuideStrings> = {
     nothingToRepeat: "Aún no hay nada que repetir.",
     narrationSpeechOn: "Narración automática activada.",
     narrationSpeechOff: "Narración automática desactivada. Describir, repetir y ayuda siguen hablando.",
+    mirrorSpeechOn:
+      "Espejo activado. La vista previa está invertida; las indicaciones habladas siguen el espacio real.",
+    mirrorSpeechOff: "Espejo desactivado. La vista previa sigue a la cámara.",
     detailSpoken: {
       critical: "Detalle: solo crítico.",
       caution: "Detalle: crítico y precaución.",
@@ -760,6 +779,10 @@ export const UI: Record<Locale, GuideStrings> = {
     aimCoach: "Aide au cadrage",
     stopAiming: "Arrêter le cadrage",
     aimTitle: "Nivellez le téléphone avec des tonalités. Nécessite la caméra et des capteurs de mouvement.",
+    mirrorOn: "Miroir activé",
+    mirrorOff: "Miroir désactivé",
+    mirrorTitle:
+      "Inverse la prévisualisation comme une vue selfie. Les indications parlées suivent la pièce réelle.",
     help: "Aide",
     resetSession: "Réinitialiser",
     close: "Fermer",
@@ -847,6 +870,9 @@ export const UI: Record<Locale, GuideStrings> = {
     nothingToRepeat: "Rien à répéter pour le moment.",
     narrationSpeechOn: "Narration automatique activée.",
     narrationSpeechOff: "Narration automatique coupée. Décrire, répéter et l'aide parlent toujours.",
+    mirrorSpeechOn:
+      "Miroir activé. La prévisualisation est inversée ; les indications parlées suivent la pièce réelle.",
+    mirrorSpeechOff: "Miroir désactivé. La prévisualisation suit la caméra.",
     detailSpoken: {
       critical: "Détail : critique uniquement.",
       caution: "Détail : critique et prudence.",
@@ -936,6 +962,10 @@ export const UI: Record<Locale, GuideStrings> = {
     aimCoach: "Guia de mira",
     stopAiming: "Parar mira",
     aimTitle: "Nivele o celular com tons de orientação. Precisa da câmera e de sensores de movimento.",
+    mirrorOn: "Espelho ligado",
+    mirrorOff: "Espelho desligado",
+    mirrorTitle:
+      "Inverte a prévia como uma selfie. As direções faladas continuam seguindo o ambiente real.",
     help: "Ajuda",
     resetSession: "Reiniciar sessão",
     close: "Fechar",
@@ -1023,6 +1053,9 @@ export const UI: Record<Locale, GuideStrings> = {
     nothingToRepeat: "Ainda não há nada para repetir.",
     narrationSpeechOn: "Narração automática ativada.",
     narrationSpeechOff: "Narração automática desligada. Descrever, repetir e ajuda ainda falam.",
+    mirrorSpeechOn:
+      "Espelho ligado. A prévia está invertida; as direções faladas seguem o ambiente real.",
+    mirrorSpeechOff: "Espelho desligado. A prévia segue a câmera.",
     detailSpoken: {
       critical: "Detalhe: somente crítico.",
       caution: "Detalhe: crítico e atenção.",
@@ -1112,6 +1145,10 @@ export const UI: Record<Locale, GuideStrings> = {
     aimCoach: "Ausrichtungshilfe",
     stopAiming: "Ausrichtung beenden",
     aimTitle: "Das Telefon mit Orientierungstönen ausrichten. Benötigt Kamera und Bewegungssensoren.",
+    mirrorOn: "Spiegel an",
+    mirrorOff: "Spiegel aus",
+    mirrorTitle:
+      "Spiegelt die Vorschau wie ein Selfie. Gesprochene Richtungen folgen weiterhin dem echten Raum.",
     help: "Hilfe",
     resetSession: "Sitzung zurücksetzen",
     close: "Schließen",
@@ -1199,6 +1236,9 @@ export const UI: Record<Locale, GuideStrings> = {
     nothingToRepeat: "Es gibt noch nichts zu wiederholen.",
     narrationSpeechOn: "Automatische Erzählung an.",
     narrationSpeechOff: "Automatische Erzählung aus. Beschreiben, Wiederholen und Hilfe sprechen weiterhin.",
+    mirrorSpeechOn:
+      "Spiegel an. Die Vorschau ist gespiegelt; gesprochene Richtungen folgen dem echten Raum.",
+    mirrorSpeechOff: "Spiegel aus. Die Vorschau folgt der Kamera.",
     detailSpoken: {
       critical: "Detail: nur kritisch.",
       caution: "Detail: kritisch und Vorsicht.",

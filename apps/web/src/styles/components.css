@@ -1240,6 +1240,7 @@ kbd {
 .rg-camera {
   position: relative;
   aspect-ratio: 9 / 16;
+  container-type: inline-size;
   width: min(100%, 440px, max(160px, calc((100dvh - 160px) * 0.5625)));
   margin-inline: auto;
   background: var(--rg-void);
@@ -1398,6 +1399,63 @@ kbd {
 .rg-feed-tag[data-tone="live"] {
   border-color: var(--rg-accent-line);
   color: var(--rg-accent);
+}
+
+/*
+  The mirror switch lives on the preview because that is the thing it changes; the page's
+  control grid is below the fold on a phone. It sits outside .rg-camera__media so the
+  flip transform cannot mirror the button's own label.
+*/
+.rg-camera__mirror {
+  position: absolute;
+  right: var(--rg-sp-4);
+  bottom: var(--rg-sp-4);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--rg-hit-min);
+  padding: 0 12px;
+  border: 1px solid rgb(244 251 248 / 34%);
+  border-radius: var(--rg-r-pill);
+  background: rgb(20 37 33 / 68%);
+  color: #f4fbf8;
+  font-family: var(--rg-font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition:
+    background var(--rg-fast) var(--rg-ease-out),
+    color var(--rg-fast) var(--rg-ease-out);
+}
+
+.rg-camera__mirror:hover {
+  background: rgb(20 37 33 / 84%);
+}
+
+/* The global focus ring squares its radius; keep it pill-shaped here. */
+.rg-camera__mirror:focus-visible {
+  border-radius: var(--rg-r-pill);
+}
+
+/* Off is a state, not an action: mute it without hiding it. */
+.rg-camera__mirror[aria-pressed="false"] {
+  color: rgb(244 251 248 / 62%);
+}
+
+.rg-camera__mirror svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* A 160px frame cannot hold two pills, so the icon keeps its accessible name. */
+@container (max-width: 180px) {
+  .rg-camera__mirror span {
+    display: none;
+  }
 }
 
 .rg-live-dot {

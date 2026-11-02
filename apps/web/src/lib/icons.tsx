@@ -156,6 +156,15 @@ export const IconTarget = (p: P) => (
   </Svg>
 );
 
+/** Flip horizontally: opposing arrows either side of a centre line. */
+export const IconMirror = (p: P) => (
+  <Svg {...p}>
+    <path d="M12 3v18" strokeDasharray="2 2.4" />
+    <path d="M8.5 7.5 4 12l4.5 4.5" />
+    <path d="M15.5 7.5 20 12l-4.5 4.5" />
+  </Svg>
+);
+
 export const IconHelp = (p: P) => (
   <Svg {...p}>
     <circle cx="12" cy="12" r="9" />

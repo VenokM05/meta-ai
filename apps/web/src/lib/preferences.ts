@@ -1,7 +1,8 @@
 /**
- * Listener preferences that must survive a reload. For a blind user the guide is
- * configured once and then trusted; losing the chosen detail level on refresh silently
- * changes what gets announced, which is worse than an extra setting to remember.
+ * Session settings that must survive a reload. For a blind user the guide is configured
+ * once and then trusted; losing the chosen detail level on refresh silently changes what
+ * gets announced, which is worse than an extra setting to remember. The view-level
+ * settings (mirroring) are kept here for the same reason: a helper corrects them once.
  */
 
 import { detectLocale, isLocale, type Locale } from "./i18n";
@@ -25,6 +26,11 @@ export interface Preferences {
   screenReaderMode: boolean;
   /** Set after the first Start so the welcome speech is not repeated every session. */
   onboarded: boolean;
+  /**
+   * Flips the camera preview like a selfie view. A persisted setting, not a rendering
+   * detail: a sighted helper has to be able to correct it and have it stay corrected.
+   */
+  mirror: boolean;
 }
 
 export const DEFAULT_PREFERENCES: Preferences = {
@@ -35,6 +41,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   speed: "normal",
   screenReaderMode: false,
   onboarded: false,
+  mirror: true,
 };
 
 const STORAGE_KEY = "roomguide.preferences.v1";
@@ -64,6 +71,7 @@ export function loadPreferences(): Preferences {
       speed: isSpeed(p.speed) ? p.speed : DEFAULT_PREFERENCES.speed,
       screenReaderMode: bool(p.screenReaderMode, DEFAULT_PREFERENCES.screenReaderMode),
       onboarded: bool(p.onboarded, DEFAULT_PREFERENCES.onboarded),
+      mirror: bool(p.mirror, DEFAULT_PREFERENCES.mirror),
     };
   } catch {
     return { ...DEFAULT_PREFERENCES, locale: detectLocale() };

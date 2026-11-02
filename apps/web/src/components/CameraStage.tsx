@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
 import type { SpatialObject } from "@roomguide/core";
 import { UI, conceptLabel, type Locale } from "../lib/i18n";
+import { IconMirror } from "../lib/icons";
 
 const VW = 100;
 const VH = 56.25;
@@ -47,11 +48,20 @@ export function CameraStage({
   provider,
   videoRef: externalRef,
   locale = "en",
+  mirror = true,
+  onToggleMirror,
 }: {
   objects: SpatialObject[];
   videoStream: MediaStream | null;
   soundingConcepts: Set<string>;
   provider: "mock" | "meta";
+  /** Flip the live preview like a selfie view. The synthetic scene stays unmirrored. */
+  mirror?: boolean;
+  /**
+   * Renders the switch on the preview itself. On a phone the control grid sits below the
+   * fold, so a mirror setting parked there is one the user never finds.
+   */
+  onToggleMirror?: () => void;
   /**
    * The element the live provider grabs frames from. Passed in so the hook that runs sweeps
    * holds the ref, rather than reaching into the DOM of a component that only displays it.
@@ -78,12 +88,13 @@ export function CameraStage({
   */
 
   /*
-    The preview is mirrored the way a selfie view is. Video and mask overlay flip together
-    so a mask still sits on the object it names; labels are mirrored here because flipping
-    the layer would render their text backwards. Narration and sonar keep real-world
-    left/right, so the mirror is a viewing convention, not a change in what is reported.
+    The preview is mirrored the way a selfie view is, and the Mirror button can turn that
+    off. Video and mask overlay flip together so a mask still sits on the object it names;
+    labels are mirrored here because flipping the layer would render their text backwards.
+    Narration and sonar keep real-world left/right: the mirror is a viewing convention,
+    not a change in what is reported.
   */
-  const mirrored = videoStream !== null;
+  const mirrored = videoStream !== null && mirror;
 
   const corridorApexY = 28;
 
@@ -154,6 +165,20 @@ export function CameraStage({
           </>
         )}
       </div>
+
+      {videoStream && onToggleMirror && (
+        <button
+          type="button"
+          className="rg-camera__mirror"
+          onClick={onToggleMirror}
+          aria-pressed={mirror}
+          aria-label={mirror ? t.mirrorOn : t.mirrorOff}
+          title={t.mirrorTitle}
+        >
+          <IconMirror />
+          <span>{mirror ? t.mirrorOn : t.mirrorOff}</span>
+        </button>
+      )}
     </div>
   );
 }

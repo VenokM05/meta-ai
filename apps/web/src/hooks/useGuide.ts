@@ -89,6 +89,24 @@ async function liveProxyReady(): Promise<boolean> {
   }
 }
 
+/**
+ * Try each constraint set in order. Only an unsatisfiable set is skipped: a refused
+ * permission or a camera already in use is a real failure and must reach the caller's
+ * error mapping instead of burning through the remaining attempts.
+ */
+async function openCamera(attempts: MediaTrackConstraints[]): Promise<MediaStream> {
+  let last: unknown = null;
+  for (const video of attempts) {
+    try {
+      return await navigator.mediaDevices.getUserMedia({ video, audio: false });
+    } catch (error) {
+      last = error;
+      if (!(error instanceof DOMException) || error.name !== "OverconstrainedError") throw error;
+    }
+  }
+  throw last;
+}
+
 export interface GuideStats {
   fps: number;
   latencyMs: number;
@@ -562,20 +580,38 @@ export function useGuide() {
     }
     try {
       // A phone held upright should see the frame the user is looking at, not a landscape
-      // crop of it. These are hints: a camera that only offers 16:9 ignores them, which is
-      // why the stage and grabFrame both take the same centred 9:16 crop of whatever arrives.
+      // crop of it. Ask for a native 9:16 stream first; phone sensors are natively 4:3, so
+      // the next request is a 3:4 stream, which keeps three quarters of its width when
+      // cropped where a 16:9 stream keeps under a third and reads as a zoom. The last
+      // request is whatever the device prefers, because a stream beats a strict frame.
       const phonePortrait = window.matchMedia("(orientation: portrait) and (max-width: 760px)").matches;
-      const s = await navigator.mediaDevices.getUserMedia({
-        video: phonePortrait
-          ? {
-              width: { ideal: 720 },
-              height: { ideal: 1280 },
-              aspectRatio: { ideal: 9 / 16 },
-              facingMode: "environment",
-            }
-          : { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "environment" },
-        audio: false,
-      });
+      const s = await openCamera(
+        phonePortrait
+          ? [
+              {
+                width: { ideal: 1080 },
+                height: { ideal: 1920 },
+                aspectRatio: { exact: 9 / 16 },
+                facingMode: "environment",
+              },
+              {
+                width: { ideal: 1080 },
+                height: { ideal: 1440 },
+                aspectRatio: { ideal: 3 / 4 },
+                facingMode: "environment",
+              },
+              { width: { ideal: 720 }, height: { ideal: 1280 }, facingMode: "environment" },
+            ]
+          : [
+              {
+                width: { ideal: 1280 },
+                height: { ideal: 960 },
+                aspectRatio: { ideal: 4 / 3 },
+                facingMode: "environment",
+              },
+              { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "environment" },
+            ],
+      );
       setStream(s);
       setCameraError(null);
       sayStatus(UI[prefsRef.current.locale].cameraReady, true);
@@ -638,6 +674,15 @@ export function useGuide() {
       updatePrefs({ speechOn: on });
       const t = UI[prefsRef.current.locale];
       sayStatus(on ? t.narrationSpeechOn : t.narrationSpeechOff);
+    },
+    [sayStatus, updatePrefs],
+  );
+
+  const setMirror = useCallback(
+    (on: boolean) => {
+      updatePrefs({ mirror: on });
+      const t = UI[prefsRef.current.locale];
+      sayStatus(on ? t.mirrorSpeechOn : t.mirrorSpeechOff);
     },
     [sayStatus, updatePrefs],
   );
@@ -788,6 +833,8 @@ export function useGuide() {
     setLocale,
     screenReaderMode: prefs.screenReaderMode,
     setScreenReaderMode,
+    mirror: prefs.mirror,
+    setMirror,
     statusText,
     speakStatus: sayStatus,
     speakText,

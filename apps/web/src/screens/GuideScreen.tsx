@@ -183,6 +183,8 @@ export function GuideScreen({ guide }: { guide: GuideController }) {
             provider={guide.provider}
             videoRef={guide.videoRef}
             locale={guide.locale}
+            mirror={guide.mirror}
+            onToggleMirror={() => guide.setMirror(!guide.mirror)}
           />
           <SonarMap
             objects={guide.objects}
