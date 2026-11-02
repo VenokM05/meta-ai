@@ -226,9 +226,9 @@ export function EvalScreen() {
         <div className="rg-panel-body">
           <ul className="rg-limits">
             <li>
-              Live mode refreshes in sweeps: six separate SAM 3.1 calls, measured at roughly 1.6–2.2s each
-              (observed range 1.0–3.3s), four lanes at a time. A sweep takes 2.5–5.6s wall clock, and a 4s
-              coast follows it, so on-screen geometry can be up to ~10s old — roughly 13 m at walking pace.
+              Live mode refreshes in sweeps: seven separate SAM 3.1 calls, measured at roughly 1.6–2.2s each
+              (observed range 1.0–3.3s), four lanes at a time. A sweep takes 4.2–6.8s wall clock, and a 4s
+              coast follows it, so on-screen geometry can be up to ~11s old — roughly 15 m at walking pace.
               Treat narration as a periodic scan, not a continuous sense.
             </li>
             <li>

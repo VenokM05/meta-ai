@@ -32,6 +32,19 @@ export function GuideScreen({ guide }: { guide: GuideController }) {
   const t = UI[guide.locale];
   const compact = useMediaQuery("(max-width: 760px)");
 
+  // Status messages are one-off events, not a steady state. Leaving the last one on screen
+  // makes a running guide still look like it is starting, and it truncates on a phone.
+  const [showStatus, setShowStatus] = useState(false);
+  useEffect(() => {
+    if (!guide.statusText) {
+      setShowStatus(false);
+      return;
+    }
+    setShowStatus(true);
+    const id = window.setTimeout(() => setShowStatus(false), 7_000);
+    return () => window.clearTimeout(id);
+  }, [guide.statusText]);
+
   // The screen is not being watched; keep it from sleeping mid-session.
   useWakeLock(guide.running);
 
@@ -153,6 +166,9 @@ export function GuideScreen({ guide }: { guide: GuideController }) {
 
   return (
     <div className="rg-guide">
+      {/* The other screens have a real h1; without one, heading navigation lands on Sonar. */}
+      <h1 className="rg-visually-hidden">{t.navGuide}</h1>
+
       {/* System messages for screen readers: start, pause, camera, failures, staleness. */}
       <p className="rg-visually-hidden" role="status" aria-live="polite">
         {guide.statusText}
@@ -293,9 +309,6 @@ export function GuideScreen({ guide }: { guide: GuideController }) {
                 </button>
               )}
 
-              <button type="button" className="rg-btn rg-btn--ghost rg-btn--wide" onClick={guide.reset}>
-                <span>{t.resetSession}</span>
-              </button>
             </div>
 
             {aim.active && <AimCoachPanel aim={aim} locale={guide.locale} />}
@@ -303,7 +316,7 @@ export function GuideScreen({ guide }: { guide: GuideController }) {
             <p className="rg-voice-status" aria-hidden="true">
               <span className="rg-voice-status-dot" data-on={guide.running} />
               <span className="rg-voice-status-text">
-                {guide.statusText || (guide.running ? t.voiceScanning : t.voiceStopped)}
+                {showStatus ? guide.statusText : guide.running ? t.voiceScanning : t.voiceStopped}
               </span>
             </p>
 
@@ -383,6 +396,11 @@ export function GuideScreen({ guide }: { guide: GuideController }) {
               </div>
               <p className="rg-audio-note">{t.detailNote}</p>
             </details>
+
+            {/* Destructive controls sit last, away from the buttons a thumb reaches for. */}
+            <button type="button" className="rg-btn rg-btn--ghost rg-btn--wide" onClick={guide.reset}>
+              <span>{t.resetSession}</span>
+            </button>
           </div>
         </aside>
       </div>
@@ -445,7 +463,7 @@ export function GuideScreen({ guide }: { guide: GuideController }) {
 
       <p className="rg-hint rg-hint--strip">
         {live
-          ? `Each sweep is ${guide.liveConcepts.length} separate SAM 3.1 calls — one concept per call, measured at roughly 1.6-2.2s each — four lanes at a time. A sweep takes 2.5-5.6s wall clock, then a 4s coast follows, so geometry can be up to ~10s old. View age counts from the last completed sweep; past ${STALE_AFTER_MS / 1000}s the guide tones and says the view is stale.`
+          ? `Each sweep is ${guide.liveConcepts.length} separate SAM 3.1 calls — one concept per call, measured at roughly 1.6-2.2s each — four lanes at a time. A sweep takes 4.2-6.8s wall clock, then a 4s coast follows, so geometry can be up to ~11s old. View age counts from the last completed sweep; past ${STALE_AFTER_MS / 1000}s the guide tones and says the view is stale.`
           : "Skip rate is the share of loop iterations that avoided a segmentation call. A high number is the gate working, not the model being idle."}
       </p>
 

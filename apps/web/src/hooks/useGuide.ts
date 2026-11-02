@@ -272,7 +272,7 @@ export function useGuide() {
           stopSpeech();
           setActiveLine(null);
         } else if (failed.length > 0) {
-          // Partial failure is the dangerous case: the screen shows six watched classes but
+          // Partial failure is the dangerous case: the screen shows seven watched classes but
           // only four answered, and silence about a class reads as "nothing there".
           const locale = prefsRef.current.locale;
           const labels = failed
@@ -415,14 +415,13 @@ export function useGuide() {
     runningRef.current = true;
     setRunning(true);
     const t = UI[prefsRef.current.locale];
-    if (firstRun) {
-      updatePrefs({ onboarded: true });
-      sayStatus(t.welcome, true);
-    } else {
-      sayStatus(t.started, true);
-    }
+    if (firstRun) updatePrefs({ onboarded: true });
+    // A blind user cannot see the Synthetic badge. Starting without a camera has to say so
+    // before the first synthetic line is mistaken for their room.
+    const opening = firstRun ? `${t.welcome} ${t.syntheticNotice}` : t.syntheticNotice;
+    sayStatus(stream ? (firstRun ? t.welcome : t.started) : opening, true);
     cue("start");
-  }, [cue, engine, gate, sayStatus, updatePrefs]);
+  }, [cue, engine, gate, sayStatus, stream, updatePrefs]);
 
   const stop = useCallback(
     (spoken = true) => {
@@ -542,9 +541,21 @@ export function useGuide() {
       setCameraError(null);
       sayStatus(UI[prefsRef.current.locale].cameraReady, true);
       cue("ready");
-    } catch {
-      // The degraded notice speaks this, so it is not duplicated here.
-      setCameraError(UI[prefsRef.current.locale].cameraUnavailable);
+    } catch (error) {
+      // The degraded notice speaks this, so it is not duplicated here. The failure names
+      // differ by cause, and each one has a different recovery step for the user.
+      const name = error instanceof DOMException ? error.name : "";
+      const t = UI[prefsRef.current.locale];
+      const message = !window.isSecureContext
+        ? t.cameraInsecure
+        : name === "NotAllowedError" || name === "SecurityError"
+          ? t.cameraDenied
+          : name === "NotFoundError" || name === "DevicesNotFoundError"
+            ? t.cameraMissing
+            : name === "NotReadableError" || name === "TrackStartError" || name === "AbortError"
+              ? t.cameraBusy
+              : t.cameraUnavailable;
+      setCameraError(message);
     }
   }, [clearFirstSweepTimer, cue, engine, gate, sayStatus, stream]);
 

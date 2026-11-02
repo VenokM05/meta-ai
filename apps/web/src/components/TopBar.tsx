@@ -73,7 +73,7 @@ export function TopBar({
           ) : (
             <>
               <span className="rg-pulse" />
-              <b>Muse API</b>
+              <b>Live camera</b>
             </>
           )}
         </span>

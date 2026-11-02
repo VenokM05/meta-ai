@@ -11,7 +11,7 @@ would rather say nothing than assert that the path is clear.
 
 ## What it does
 
-- **Live mode.** The camera frame is segmented by SAM 3.1 on a sweep: six concepts, one model
+- **Live mode.** The camera frame is segmented by SAM 3.1 on a sweep: seven concepts, one model
   call each, four in flight at a time. Between sweeps the guide coasts on the last geometry it
   saw and keeps narrating changes in position rather than re-describing the room.
 - **Spatial language, not labels.** Detections become `a person, one step ahead, slightly
@@ -50,9 +50,9 @@ These numbers shaped the design:
 | --- | --- |
 | One call answers one concept | A comma-joined prompt on an image containing both objects returned zero matches |
 | Per-call latency | 1.0–3.3 s observed, typically 1.6–2.2 s |
-| Sweep wall clock | 2.5–5.6 s (six concepts, four lanes) |
+| Sweep wall clock | 4.2–6.8 s (seven concepts, four lanes) |
 | Refresh cadence | 4 s coast between sweeps |
-| Worst-case geometry age | ~10 s, roughly 13 m at walking pace |
+| Worst-case geometry age | ~11 s, roughly 15 m at walking pace |
 
 That last row is the reason keyframe gating and mask coasting are load-bearing rather than an
 optimisation: at 1.6–2.2 s per call there is no such thing as a per-frame live model. Treat
@@ -176,8 +176,8 @@ fixtures with hand-labelled photographs is the next step before any accuracy cla
 
 ## Known limitations
 
-- **Stale geometry.** A sweep plus the coast means on-screen geometry can be up to ~10 s old,
-  roughly 13 m at walking pace. There is no motion extrapolation yet.
+- **Stale geometry.** A sweep plus the coast means on-screen geometry can be up to ~11 s old,
+  roughly 15 m at walking pace. There is no motion extrapolation yet.
 - **Distance is a proxy.** It assumes a per-class reference width; flat ground objects are the
   worst case, and the estimate is wrong whenever that assumption is.
 - **Optimistic matching.** Evaluation uses bounding-box IoU, not mask IoU, so sloppy
@@ -197,7 +197,7 @@ fixtures with hand-labelled photographs is the next step before any accuracy cla
    it is impressive.
 2. Extrapolate mask motion between sweeps to cut the staleness window.
 3. Replace the synthetic eval fixtures with hand-labelled photographs.
-4. Raise live coverage from six classes to the full twelve once rate-limit behaviour is
+4. Raise live coverage from seven classes to the full twelve once rate-limit behaviour is
    understood.
 
 Built for the Meta Global AI Developer Hackathon, indie developer track. Submission deadline

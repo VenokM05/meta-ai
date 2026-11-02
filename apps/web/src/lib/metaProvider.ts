@@ -18,7 +18,8 @@ import { CONCEPTS_BY_ID, parseSamText, type Detection, type Scene } from "@roomg
 /**
  * The live watch list. Deliberately narrower than the full 12-class vocabulary: at ~1.8s per
  * concept, every extra class is another slot in the sweep, and a sweep that takes 20s is
- * worse than a sweep that watches the things you can fall on.
+ * worse than a sweep that watches the things you can fall on. Chair earns its slot because
+ * it is the ordinary-room obstacle a blind user is most likely to meet.
  *
  * These are vocabulary ids, not prompt strings. The provider translates each id to its
  * `prompt` before the request and tags detections with the id on the way back, so a class
@@ -31,6 +32,7 @@ export const LIVE_CONCEPTS = [
   "cord",
   "open_door",
   "pole",
+  "chair",
 ] as const;
 
 /**

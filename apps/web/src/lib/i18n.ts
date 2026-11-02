@@ -334,6 +334,11 @@ export interface GuideStrings {
   cameraOff: string;
   cameraReady: string;
   cameraUnavailable: string;
+  cameraDenied: string;
+  cameraBusy: string;
+  cameraMissing: string;
+  cameraInsecure: string;
+  syntheticNotice: string;
   nothingToRepeat: string;
   narrationSpeechOn: string;
   narrationSpeechOff: string;
@@ -465,6 +470,13 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraOff: "Camera off. Using the synthetic feed.",
     cameraReady: "Camera ready. Point it ahead.",
     cameraUnavailable: "Camera unavailable. The synthetic feed keeps the pipeline explorable.",
+    cameraDenied:
+      "Camera access was denied. Allow it for this site in your browser settings, then try again.",
+    cameraBusy: "The camera is in use by another app. Close it and try again.",
+    cameraMissing: "No camera was found on this device.",
+    cameraInsecure:
+      "The camera needs a secure page. Open the HTTPS link, not a local network address.",
+    syntheticNotice: "Synthetic scene, not your camera. Use my camera to scan your room.",
     nothingToRepeat: "Nothing to repeat yet.",
     narrationSpeechOn: "Automatic narration on.",
     narrationSpeechOff: "Automatic narration off. Describe, repeat, and help still speak.",
@@ -623,6 +635,14 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraOff: "Cámara desactivada. Usando la escena sintética.",
     cameraReady: "Cámara lista. Apúntela hacia delante.",
     cameraUnavailable: "Cámara no disponible. La escena sintética mantiene la guía explorable.",
+    cameraDenied:
+      "Se denegó el acceso a la cámara. Permítalo para este sitio en los ajustes del navegador y vuelva a intentarlo.",
+    cameraBusy: "Otra aplicación está usando la cámara. Ciérrela y vuelva a intentarlo.",
+    cameraMissing: "No se encontró ninguna cámara en este dispositivo.",
+    cameraInsecure:
+      "La cámara necesita una página segura. Abra el enlace HTTPS, no una dirección de red local.",
+    syntheticNotice:
+      "Escena sintética, no su cámara. Use Mi cámara para escanear su habitación.",
     nothingToRepeat: "Aún no hay nada que repetir.",
     narrationSpeechOn: "Narración automática activada.",
     narrationSpeechOff: "Narración automática desactivada. Describir, repetir y ayuda siguen hablando.",
@@ -781,6 +801,14 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraOff: "Caméra désactivée. Scène synthétique utilisée.",
     cameraReady: "Caméra prête. Dirigez-la devant vous.",
     cameraUnavailable: "Caméra indisponible. La scène synthétique permet de continuer à explorer.",
+    cameraDenied:
+      "L'accès à la caméra a été refusé. Autorisez-le pour ce site dans les réglages du navigateur, puis réessayez.",
+    cameraBusy: "La caméra est utilisée par une autre application. Fermez-la et réessayez.",
+    cameraMissing: "Aucune caméra n'a été trouvée sur cet appareil.",
+    cameraInsecure:
+      "La caméra nécessite une page sécurisée. Ouvrez le lien HTTPS, pas une adresse de réseau local.",
+    syntheticNotice:
+      "Scène synthétique, pas votre caméra. Utilisez Ma caméra pour analyser votre pièce.",
     nothingToRepeat: "Rien à répéter pour le moment.",
     narrationSpeechOn: "Narration automatique activée.",
     narrationSpeechOff: "Narration automatique coupée. Décrire, répéter et l'aide parlent toujours.",
@@ -939,6 +967,14 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraOff: "Câmera desligada. Usando a cena sintética.",
     cameraReady: "Câmera pronta. Aponte para a frente.",
     cameraUnavailable: "Câmera indisponível. A cena sintética mantém o guia explorável.",
+    cameraDenied:
+      "O acesso à câmara foi negado. Permita-o para este site nas definições do navegador e tente novamente.",
+    cameraBusy: "A câmara está a ser usada por outra aplicação. Feche-a e tente novamente.",
+    cameraMissing: "Não foi encontrada nenhuma câmara neste dispositivo.",
+    cameraInsecure:
+      "A câmara precisa de uma página segura. Abra a ligação HTTPS, não um endereço de rede local.",
+    syntheticNotice:
+      "Cena sintética, não a sua câmara. Use A minha câmara para analisar a sua sala.",
     nothingToRepeat: "Ainda não há nada para repetir.",
     narrationSpeechOn: "Narração automática ativada.",
     narrationSpeechOff: "Narração automática desligada. Descrever, repetir e ajuda ainda falam.",
@@ -1097,6 +1133,14 @@ export const UI: Record<Locale, GuideStrings> = {
     cameraOff: "Kamera aus. Die synthetische Szene wird verwendet.",
     cameraReady: "Kamera bereit. Richten Sie sie nach vorn.",
     cameraUnavailable: "Kamera nicht verfügbar. Die synthetische Szene bleibt zum Erkunden verfügbar.",
+    cameraDenied:
+      "Kamerazugriff wurde abgelehnt. Erlauben Sie ihn für diese Seite in den Browsereinstellungen und versuchen Sie es erneut.",
+    cameraBusy: "Die Kamera wird von einer anderen App verwendet. Schließen Sie sie und versuchen Sie es erneut.",
+    cameraMissing: "Auf diesem Gerät wurde keine Kamera gefunden.",
+    cameraInsecure:
+      "Die Kamera benötigt eine sichere Seite. Öffnen Sie den HTTPS-Link, keine lokale Netzwerkadresse.",
+    syntheticNotice:
+      "Synthetische Szene, nicht Ihre Kamera. Verwenden Sie Meine Kamera, um Ihren Raum zu erfassen.",
     nothingToRepeat: "Es gibt noch nichts zu wiederholen.",
     narrationSpeechOn: "Automatische Erzählung an.",
     narrationSpeechOff: "Automatische Erzählung aus. Beschreiben, Wiederholen und Hilfe sprechen weiterhin.",
