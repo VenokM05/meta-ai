@@ -77,10 +77,18 @@ export function CameraStage({
     grabFrame sends that same centred crop, so masks land on the pixels they came from.
   */
 
+  /*
+    The preview is mirrored the way a selfie view is. Video and mask overlay flip together
+    so a mask still sits on the object it names; labels are mirrored here because flipping
+    the layer would render their text backwards. Narration and sonar keep real-world
+    left/right, so the mirror is a viewing convention, not a change in what is reported.
+  */
+  const mirrored = videoStream !== null;
+
   const corridorApexY = 28;
 
   return (
-    <div className="rg-camera" data-provider={provider}>
+    <div className="rg-camera" data-provider={provider} data-mirror={mirrored || undefined}>
       <div className="rg-camera__media">
         {videoStream ? <video ref={videoRef} playsInline muted autoPlay /> : <SyntheticBackdrop />}
 
@@ -110,7 +118,9 @@ export function CameraStage({
         */}
         <div className="rg-label-layer" aria-hidden="true">
           {objects.map((o) => {
-            const x = clampPct(o.bbox.x * 100);
+            // Mirror the box, not just its left edge: the overlay is flipped with the
+            // video, and anchoring to the un-mirrored edge would miss by one mask width.
+            const x = clampPct((mirrored ? 1 - (o.bbox.x + o.bbox.w) : o.bbox.x) * 100);
             return (
               <span
                 key={`label-${o.id}-${o.concept}`}

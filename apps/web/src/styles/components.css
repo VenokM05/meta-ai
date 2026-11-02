@@ -1275,6 +1275,16 @@ kbd {
   z-index: 0;
 }
 
+/*
+  A selfie-style preview: the video and the mask overlay flip together, so a mask still
+  sits on the object it names. Labels are mirrored in CameraStage instead, because
+  flipping this layer would render their text backwards.
+*/
+.rg-camera[data-mirror="true"] .rg-camera__media video,
+.rg-camera[data-mirror="true"] .rg-camera__media > svg {
+  transform: scaleX(-1);
+}
+
 /* Edge falloff keeps floating labels legible over a bright room. */
 .rg-camera::after {
   content: "";
