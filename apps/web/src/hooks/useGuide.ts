@@ -562,8 +562,8 @@ export function useGuide() {
     }
     try {
       // A phone held upright should see the frame the user is looking at, not a landscape
-      // crop of it. Asking for 9:16 lets the browser rotate or crop to portrait; the stage
-      // then follows whatever aspect the stream actually delivers.
+      // crop of it. These are hints: a camera that only offers 16:9 ignores them, which is
+      // why the stage and grabFrame both take the same centred 9:16 crop of whatever arrives.
       const phonePortrait = window.matchMedia("(orientation: portrait) and (max-width: 760px)").matches;
       const s = await navigator.mediaDevices.getUserMedia({
         video: phonePortrait

@@ -14,6 +14,7 @@
  */
 
 import { CONCEPTS_BY_ID, parseSamText, type Detection, type Scene } from "@roomguide/core";
+import { centerCrop } from "./frame";
 
 /**
  * The live watch list. Deliberately narrower than the full 12-class vocabulary: at ~1.8s per
@@ -57,16 +58,20 @@ export function grabFrame(video: HTMLVideoElement): FrameGrab | null {
   const vh = video.videoHeight;
   if (!vw || !vh) return null;
 
-  const scale = Math.min(1, MAX_FRAME_EDGE / Math.max(vw, vh));
-  const width = Math.max(1, Math.round(vw * scale));
-  const height = Math.max(1, Math.round(vh * scale));
+  // Send the portrait window, not the sensor's full width. A 16:9 phone stream analysed
+  // whole would put detections on pixels the user never sees, and masks drawn over the
+  // cropped stage would then sit off to the sides of the objects they name.
+  const crop = centerCrop(vw, vh);
+  const scale = Math.min(1, MAX_FRAME_EDGE / Math.max(crop.sw, crop.sh));
+  const width = Math.max(1, Math.round(crop.sw * scale));
+  const height = Math.max(1, Math.round(crop.sh * scale));
 
   const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d");
   if (!ctx) return null;
-  ctx.drawImage(video, 0, 0, width, height);
+  ctx.drawImage(video, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, width, height);
 
   return { dataUrl: canvas.toDataURL("image/jpeg", JPEG_QUALITY), width, height };
 }

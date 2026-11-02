@@ -1249,7 +1249,7 @@ kbd {
   box-shadow: var(--rg-shadow-2);
 }
 
-/* The video rect inside the window. Sized by aspect in CameraStage. */
+/* The crop window: video and mask overlay share this box. */
 .rg-camera__media {
   position: absolute;
   inset: 0;
@@ -2418,7 +2418,7 @@ main:focus {
       440px,
       max(
         160px,
-        calc((100dvh - 377px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 0.5625)
+        calc((100dvh - 390px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 0.5625)
       )
     );
   }
@@ -2444,6 +2444,15 @@ main:focus {
 
   .rg-now-body {
     gap: var(--rg-sp-2);
+  }
+
+  /*
+    The dock's Repeat does the same job and the eyebrow already says how fresh the line
+    is, so this footer is repetition that costs the card its last 63px — enough to slide
+    under the dock once a live line fills two rows.
+  */
+  .rg-now-foot {
+    display: none;
   }
 
   .rg-now-live {

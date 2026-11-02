@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
 import type { SpatialObject } from "@roomguide/core";
 import { UI, conceptLabel, type Locale } from "../lib/i18n";
@@ -63,51 +63,25 @@ export function CameraStage({
   const videoRef = externalRef ?? localRef;
   const t = UI[locale];
 
-  const [aspect, setAspect] = useState<number | null>(null);
-
   useEffect(() => {
-    if (!videoStream) {
-      setAspect(null);
-      return;
-    }
+    if (!videoStream) return;
     const el = videoRef.current;
     if (!el) return;
     el.srcObject = videoStream;
     void el.play().catch(() => undefined);
-
-    // The stage has to match the stream's own aspect: masks are stretched over the same
-    // box, so an assumed 16:9 on a portrait stream would slide every mask off the video.
-    const sync = () => {
-      if (el.videoWidth > 0 && el.videoHeight > 0) setAspect(el.videoWidth / el.videoHeight);
-    };
-    sync();
-    el.addEventListener("loadedmetadata", sync);
-    el.addEventListener("resize", sync);
-    return () => {
-      el.removeEventListener("loadedmetadata", sync);
-      el.removeEventListener("resize", sync);
-    };
   }, [videoStream, videoRef]);
 
   /*
-    The frame is always 9:16; the stream inside it is not. Letterbox the video and
-    size the overlay to that inner rect, because the masks are stretched over the
-    same box the video occupies. Sizing them to the frame would slide every mask
-    off a landscape webcam feed.
+    The frame is always 9:16, whatever the sensor delivers. A phone that only offers 16:9
+    is not letterboxed into a wide strip: the video is cover-cropped to the window, and
+    grabFrame sends that same centred crop, so masks land on the pixels they came from.
   */
-  const FRAME = 9 / 16;
-  const media =
-    aspect === null
-      ? { width: "100%", height: "100%" }
-      : aspect >= FRAME
-        ? { width: "100%", height: `${((FRAME / aspect) * 100).toFixed(3)}%` }
-        : { width: `${((aspect / FRAME) * 100).toFixed(3)}%`, height: "100%" };
 
   const corridorApexY = 28;
 
   return (
     <div className="rg-camera" data-provider={provider}>
-      <div className="rg-camera__media" style={media}>
+      <div className="rg-camera__media">
         {videoStream ? <video ref={videoRef} playsInline muted autoPlay /> : <SyntheticBackdrop />}
 
         <svg
@@ -159,7 +133,7 @@ export function CameraStage({
         <div className="rg-scanline" style={{ ["--rg-scan-h" as string]: "calc(100% - 2px)" }} />
       </div>
 
-      {/* Frame-level status stays in the corner even when the video is letterboxed. */}
+      {/* Frame-level status stays in the corner of the window, over the crop. */}
       <div className="rg-feed-tag" data-tone={provider === "mock" ? "mock" : "live"}>
         {provider === "mock" ? (
           t.feedSynthetic
