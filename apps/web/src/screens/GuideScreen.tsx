@@ -214,14 +214,19 @@ export function GuideScreen({ guide }: { guide: GuideController }) {
         </div>
 
         <aside className="rg-hero-side" aria-label={t.asideLabel}>
-          <p className="rg-standfirst">{t.standfirst}</p>
-
+          {/* The latest line leads. Everything else on this column is secondary. */}
           <NowSpeaking
             activeLine={guide.activeLine}
             running={guide.running}
             lineCount={guide.history.length}
             locale={guide.locale}
+            viewAgeMs={guide.viewAgeMs}
+            stale={stale}
+            provider={guide.provider}
+            onReplay={guide.repeatLast}
           />
+
+          <p className="rg-standfirst">{t.standfirst}</p>
 
           <div className="rg-hero-actions">
             <div className="rg-controls">
@@ -485,9 +490,11 @@ export function GuideScreen({ guide }: { guide: GuideController }) {
             className="rg-dock-btn rg-dock-btn--primary"
             onClick={() => (guide.running ? guide.stop() : startGuide())}
             aria-keyshortcuts="Space"
+            /* The dock column is too narrow for the full phrase in most locales. */
+            aria-label={guide.running ? t.pause : t.start}
           >
             {guide.running ? <IconPause /> : <IconPlay />}
-            <span>{guide.running ? t.pause : t.start}</span>
+            <span>{guide.running ? t.dockPause : t.dockStart}</span>
           </button>
           <button type="button" className="rg-dock-btn" onClick={guide.describeNow} aria-keyshortcuts="D">
             <IconSpark />

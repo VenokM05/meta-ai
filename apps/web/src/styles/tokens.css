@@ -1,68 +1,75 @@
 /* ============================================================
    Room Guide — design tokens (single source of truth)
 
-   Identity: a field notebook for the dark. Warm graphite surfaces,
-   bone text, one signal-lime accent, and colour spent only on hazard
-   meaning. Every text pair below is verified against --rg-surface-1
-   at WCAG AAA for normal text; comments carry the measured ratio.
+   Identity: a calm accessibility companion. Soft mint and white,
+   dark green ink, one confident green for action, and colour spent
+   only on hazard meaning. Text pairs are verified against white and
+   against --rg-bg for WCAG AA; comments carry the measured ratio.
    ============================================================ */
 
 :root {
-  /* ---- Surfaces: warm graphite, deliberately not blue-black ---- */
-  --rg-void: #050604;
-  --rg-bg: #0a0b09;
-  --rg-surface-1: #101210;
-  --rg-surface-2: #161914;
-  --rg-surface-3: #1f231d;
-  --rg-scrim: rgb(5 6 4 / 74%);
-  --rg-glass: rgb(10 11 9 / 84%);
+  /* ---- Surfaces: paper white, cool mint wash ---- */
+  --rg-void: #142521;
+  --rg-bg: #f5f8f7;
+  --rg-surface-1: #ffffff;
+  --rg-surface-2: #eef5f2;
+  --rg-surface-3: #e2eee9;
+  --rg-scrim: rgb(20 37 33 / 42%);
+  --rg-glass: rgb(245 248 247 / 88%);
 
   /* ---- Lines ---- */
-  --rg-border: #2a2f28;
-  --rg-border-strong: #41473d;
+  --rg-border: #dce6e2;
+  --rg-border-strong: #b3c7c0;
+  --rg-field-border: #7e968d; /* 3.2:1 on white — form controls stay locatable */
 
   /* ---- Text ---- */
-  --rg-text-1: #f2efe6; /* 16.4:1  AAA */
-  --rg-text-2: #c6c4b8; /* 10.8:1  AAA */
-  --rg-text-3: #a9a99b; /*  7.9:1  AAA */
+  --rg-text-1: #18332f; /* 13.2:1 on white  AAA */
+  --rg-text-2: #3a4f49; /*  8.8:1 on white  AAA */
+  --rg-text-3: #52665f; /*  6.2:1 on white  AAA */
 
   /*
-    Signal lime belongs to the live loop: pulse, sweep, focus, primary action.
-    Keeping it off decorative chrome is what lets it mean "this is running".
+    Primary green carries action and the live loop. It is dark enough to
+    read as text (5.6:1 on the mint page) and to carry white ink (6.0:1).
   */
-  --rg-accent: #d9f45b; /* 15.3:1 */
-  --rg-accent-soft: #e8ff8f;
-  --rg-accent-ink: #0a0c09; /* 16.1:1 on accent fill */
-  --rg-accent-dim: rgb(217 244 91 / 12%);
-  --rg-accent-line: rgb(217 244 91 / 30%);
+  --rg-accent: #12705c;
+  --rg-accent-soft: #0e604f;
+  --rg-accent-ink: #ffffff;
+  --rg-accent-dim: #e4f5ef;
+  --rg-accent-line: rgb(18 112 92 / 34%);
+  --rg-accent-fill: #16866f; /* large decorative fills only */
 
   /*
-    Three tiers, three hues that survive red-green colour blindness:
-    coral / amber / sky. Shape and dash pattern carry the same distinction,
-    so the encoding still works in greyscale.
+    Hazard text is the dark hue; hazard marks over camera imagery are the
+    bright hue. Shape and dash pattern carry the same distinction, so the
+    encoding survives greyscale and colour blindness.
   */
-  --rg-critical: #ff8a80; /*  8.2:1 */
-  --rg-caution: #ffc65c; /* 12.1:1 */
-  --rg-informative: #7fb6ff; /*  9.0:1 */
-  --rg-critical-fill: rgb(255 138 128 / 18%);
-  --rg-caution-fill: rgb(255 198 92 / 16%);
-  --rg-informative-fill: rgb(127 182 255 / 16%);
+  --rg-critical: #a32017; /*  7.6:1 on white */
+  --rg-caution: #7a5200; /*  6.9:1 on white */
+  --rg-informative: #14508f; /*  8.2:1 on white */
+  --rg-critical-fill: #fce5df;
+  --rg-caution-fill: #fff1c9;
+  --rg-informative-fill: #dceeff;
 
-  /* ---- Typography: serif voice, sans interface, mono evidence ---- */
-  --rg-font-display: "Newsreader", "Iowan Old Style", Georgia, serif;
-  --rg-font-ui: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  --rg-font-data: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
-  --rg-text-xs: 0.75rem;
-  --rg-text-sm: 0.875rem;
+  /* Marks sit on video, so they use the bright variants from the palette. */
+  --rg-mark-critical: #ff8a80;
+  --rg-mark-caution: #ffc65c;
+  --rg-mark-informative: #7fb6ff;
+
+  /* ---- Typography: Hyperlegible prose, Inter interface ---- */
+  --rg-font-display: "Atkinson Hyperlegible", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --rg-font-ui: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --rg-font-data: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --rg-text-xs: 0.8125rem; /* 13px */
+  --rg-text-sm: 0.9375rem; /* 15px */
   --rg-text-base: 1rem;
   --rg-text-lg: 1.25rem;
-  --rg-text-xl: 1.75rem;
-  --rg-text-2xl: 2.5rem;
-  --rg-text-display: clamp(2.75rem, 6vw, 5.5rem);
-  --rg-display-lh: 1.02;
+  --rg-text-xl: 1.6rem;
+  --rg-text-2xl: 2.25rem;
+  --rg-text-display: clamp(2.5rem, 5vw, 4.25rem);
+  --rg-display-lh: 1.08;
   --rg-leading: 1.6;
-  --rg-tracking-label: 0.14em;
-  --rg-tracking-tight: -0.02em;
+  --rg-tracking-label: 0.12em;
+  --rg-tracking-tight: -0.015em;
 
   /* ---- Spacing: 4/8 rhythm ---- */
   --rg-sp-1: 4px;
@@ -75,16 +82,20 @@
   --rg-sp-8: 64px;
   --rg-sp-9: 96px;
 
-  /* ---- Radii: editorial pages, instrument hardware ---- */
-  --rg-r-1: 2px;
-  --rg-r-2: 5px;
-  --rg-r-3: 10px;
-  --rg-r-4: 16px;
+  /* ---- Radii: rounded cards, calm controls ---- */
+  --rg-r-1: 6px;
+  --rg-r-2: 10px;
+  --rg-r-3: 16px;
+  --rg-r-4: 22px;
   --rg-r-pill: 999px;
 
-  /* ---- Elevation ---- */
-  --rg-shadow-1: 0 10px 30px rgb(0 0 0 / 32%);
-  --rg-shadow-2: 0 24px 64px rgb(0 0 0 / 52%);
+  /* ---- Elevation: soft daylight, never a hard drop ---- */
+  --rg-shadow-1:
+    0 1px 2px rgb(24 51 47 / 6%),
+    0 8px 24px rgb(24 51 47 / 7%);
+  --rg-shadow-2:
+    0 2px 4px rgb(24 51 47 / 7%),
+    0 20px 48px rgb(24 51 47 / 12%);
   --rg-glow: 0 0 0 1px var(--rg-accent-line);
 
   /* ---- Motion ---- */
@@ -94,10 +105,11 @@
   --rg-ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --rg-ease-cinema: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* ---- Focus: a dark wall then lime, so it holds on any surface ---- */
+  /* ---- Focus: white then green, so it holds on white and on mint ---- */
   --rg-focus-ring:
-    0 0 0 2px var(--rg-bg), 0 0 0 4px var(--rg-accent),
-    0 0 0 7px rgb(217 244 91 / 22%);
+    0 0 0 2px #ffffff,
+    0 0 0 4px var(--rg-accent),
+    0 0 0 7px rgb(18 112 92 / 24%);
 
   /* ---- Layout ---- */
   --rg-z-base: 0;
@@ -107,37 +119,45 @@
   --rg-z-toast: 100;
   --rg-z-max: 1000;
 
-  --rg-shell: 1480px;
+  --rg-shell: 1440px;
   --rg-gutter: clamp(16px, 2.4vw, 36px);
   --rg-hit-min: 44px;
 }
 
 /* User-facing density override, set on <html> from the settings panel. */
 html[data-type-scale="large"] {
-  --rg-text-xs: 0.875rem;
-  --rg-text-sm: 1rem;
+  --rg-text-xs: 0.9375rem;
+  --rg-text-sm: 1.0625rem;
   --rg-text-base: 1.1875rem;
   --rg-text-lg: 1.5rem;
-  --rg-text-xl: 2.0625rem;
-  --rg-text-2xl: 2.875rem;
-  --rg-text-display: clamp(3rem, 6.5vw, 6rem);
+  --rg-text-xl: 1.875rem;
+  --rg-text-2xl: 2.625rem;
+  --rg-text-display: clamp(2.75rem, 5.5vw, 4.75rem);
+  --rg-hit-min: 52px;
 }
 
-/* High-contrast mode: pure black, heavier lines, no fills at rest. */
+/* High-contrast mode: white paper, black ink, heavier lines. */
 html[data-contrast="high"] {
-  --rg-bg: #000;
-  --rg-surface-1: #000;
-  --rg-surface-2: #0b0b0b;
-  --rg-surface-3: #161616;
-  --rg-glass: rgb(0 0 0 / 92%);
-  --rg-border: #7b8673;
-  --rg-border-strong: #a9b3a1;
-  --rg-text-1: #fff;
-  --rg-text-2: #e9ece4;
-  --rg-text-3: #c9cec3;
-  --rg-accent: #eaff8a;
-  --rg-accent-dim: rgb(234 255 138 / 18%);
-  --rg-critical: #ff9c93;
-  --rg-caution: #ffd06e;
-  --rg-informative: #9cc9ff;
+  --rg-bg: #ffffff;
+  --rg-surface-1: #ffffff;
+  --rg-surface-2: #f2f2f2;
+  --rg-surface-3: #e6e6e6;
+  --rg-glass: rgb(255 255 255 / 96%);
+  --rg-border: #5f6f69;
+  --rg-border-strong: #2b3b35;
+  --rg-field-border: #2b3b35;
+  --rg-text-1: #000000;
+  --rg-text-2: #101a17;
+  --rg-text-3: #26332f;
+  --rg-accent: #084f41;
+  --rg-accent-soft: #063f34;
+  --rg-accent-ink: #ffffff;
+  --rg-accent-dim: #e2f5ee;
+  --rg-accent-line: #084f41;
+  --rg-critical: #8a150e;
+  --rg-caution: #5c3d00;
+  --rg-informative: #0b3c70;
+  --rg-critical-fill: #ffe4e0;
+  --rg-caution-fill: #fff0c2;
+  --rg-informative-fill: #dcecff;
 }

@@ -272,7 +272,11 @@ export interface GuideStrings {
   /**
    * Phone dock labels. Five columns on a 320px screen leave ~58px each, so these
    * are deliberately shorter than the page buttons. The page keeps the long forms.
+   * The primary button shows the short form but keeps the full phrase as its
+   * accessible name, so "Mettre en pause" is heard even though "Pause" is shown.
    */
+  dockStart: string;
+  dockPause: string;
   dockDescribe: string;
   dockRepeat: string;
   dockNarrationOn: string;
@@ -320,6 +324,8 @@ export interface GuideStrings {
   lineCount: (n: number) => string;
   listening: string;
   notRunning: string;
+  updatedAgo: (seconds: number) => string;
+  outdated: string;
   trigger: Record<NarrationLine["trigger"], string>;
   logTitle: string;
   logEmpty: string;
@@ -392,8 +398,8 @@ export const UI: Record<Locale, GuideStrings> = {
     corridorNote: "Dashed corridor marks the path ahead",
     legendAria: "Hazard tiers",
     stageAria: "Segmented view of the scene",
-    feedSynthetic: "Synthetic feed",
-    feedLive: "Live camera",
+    feedSynthetic: "Demo mode",
+    feedLive: "Live",
 
     start: "Start guide",
     pause: "Pause guide",
@@ -401,6 +407,8 @@ export const UI: Record<Locale, GuideStrings> = {
     repeat: "Repeat last",
     narrationOn: "Narration on",
     narrationOff: "Narration off",
+    dockStart: "Start",
+    dockPause: "Pause",
     dockDescribe: "Describe",
     dockRepeat: "Repeat",
     dockNarrationOn: "Narration",
@@ -447,11 +455,13 @@ export const UI: Record<Locale, GuideStrings> = {
     helpSpoken:
       "Room Guide. Space starts or pauses. D describes the view now. R repeats the last announcement. S turns automatic narration on or off. One, two, or three sets detail: critical only, critical and caution, or everything. A starts or stops aim coaching. H opens or closes this help. Escape closes help, or stops the guide. Every command below also has a button. Earcons: a rising pair means start, a falling pair means pause, one soft ping means a fresh scan, and a low double thud means the view is stale. Aim coaching needs the camera on and a phone or tablet with motion sensors. Level means the phone is level, not that the path is clear. The guide never says the path is clear.",
 
-    spokenNow: "Spoken now",
+    spokenNow: "Latest guidance",
     pausedNow: "Paused",
     lineCount: (n) => `${n} ${n === 1 ? "line" : "lines"}`,
     listening: "Listening. Nothing new to report.",
     notRunning: "Not running.",
+    updatedAgo: (s) => `Updated ${s}s ago`,
+    outdated: "Outdated",
     trigger: {
       new: "first seen",
       approaching: "closing in",
@@ -554,8 +564,8 @@ export const UI: Record<Locale, GuideStrings> = {
     corridorNote: "La línea discontinua marca el camino",
     legendAria: "Niveles de peligro",
     stageAria: "Vista segmentada de la escena",
-    feedSynthetic: "Escena sintética",
-    feedLive: "Cámara en vivo",
+    feedSynthetic: "Modo demo",
+    feedLive: "En vivo",
 
     start: "Iniciar guía",
     pause: "Pausar guía",
@@ -563,6 +573,8 @@ export const UI: Record<Locale, GuideStrings> = {
     repeat: "Repetir",
     narrationOn: "Narración activa",
     narrationOff: "Narración desactivada",
+    dockStart: "Iniciar",
+    dockPause: "Pausar",
     dockDescribe: "Describir",
     dockRepeat: "Repetir",
     dockNarrationOn: "Narración",
@@ -618,11 +630,13 @@ export const UI: Record<Locale, GuideStrings> = {
     helpSpoken:
       "Room Guide. Espacio inicia o pausa. D describe la vista ahora. R repite el último anuncio. S activa o desactiva la narración automática. Uno, dos o tres ajusta el detalle: solo crítico, crítico y precaución, o todo. A inicia o detiene la guía de puntería. H abre o cierra esta ayuda. Escape cierra la ayuda o detiene la guía. Cada comando también tiene un botón. Avisos sonoros: un par ascendente significa inicio, un par descendente significa pausa, un pitido suave significa un escaneo nuevo, y un doble golpe grave significa que la vista está desactualizada. La guía de puntería necesita la cámara y un teléfono o tableta con sensores de movimiento. Nivel significa que el teléfono está nivelado, no que el camino esté despejado. La guía nunca dice que el camino esté despejado.",
 
-    spokenNow: "Ahora",
+    spokenNow: "Última indicación",
     pausedNow: "En pausa",
     lineCount: (n) => `${n} ${n === 1 ? "línea" : "líneas"}`,
     listening: "Escuchando. Nada nuevo que anunciar.",
     notRunning: "Detenido.",
+    updatedAgo: (s) => `Actualizado hace ${s} s`,
+    outdated: "Desactualizado",
     trigger: {
       new: "primera vez",
       approaching: "se acerca",
@@ -726,8 +740,8 @@ export const UI: Record<Locale, GuideStrings> = {
     corridorNote: "Le couloir en pointillés marque le chemin",
     legendAria: "Niveaux de danger",
     stageAria: "Vue segmentée de la scène",
-    feedSynthetic: "Scène synthétique",
-    feedLive: "Caméra en direct",
+    feedSynthetic: "Mode démo",
+    feedLive: "En direct",
 
     start: "Démarrer le guide",
     pause: "Mettre en pause",
@@ -735,12 +749,14 @@ export const UI: Record<Locale, GuideStrings> = {
     repeat: "Répéter",
     narrationOn: "Narration active",
     narrationOff: "Narration coupée",
+    dockStart: "Démarrer",
+    dockPause: "Pause",
     dockDescribe: "Décrire",
     dockRepeat: "Répéter",
     dockNarrationOn: "Narration",
     dockNarrationOff: "Coupée",
     useCamera: "Utiliser ma caméra",
-    useSynthetic: "Scène synthétique",
+    useSynthetic: "Mode démo",
     aimCoach: "Aide au cadrage",
     stopAiming: "Arrêter le cadrage",
     aimTitle: "Nivellez le téléphone avec des tonalités. Nécessite la caméra et des capteurs de mouvement.",
@@ -790,11 +806,13 @@ export const UI: Record<Locale, GuideStrings> = {
     helpSpoken:
       "Room Guide. Espace démarre ou met en pause. D décrit la vue actuelle. R répète la dernière annonce. S active ou coupe la narration automatique. Un, deux ou trois règle le détail : critique uniquement, critique et prudence, ou tout. A démarre ou arrête l'aide au cadrage. H ouvre ou ferme cette aide. Échap ferme l'aide ou arrête le guide. Chaque commande a aussi un bouton. Signaux sonores : une paire montante signifie le démarrage, une paire descendante la pause, un ping doux une nouvelle analyse, et un double son grave une vue périmée. L'aide au cadrage nécessite la caméra et un téléphone ou une tablette avec capteurs de mouvement. Niveau signifie que le téléphone est de niveau, pas que la voie est libre. Le guide ne dit jamais que la voie est libre.",
 
-    spokenNow: "Maintenant",
+    spokenNow: "Dernière indication",
     pausedNow: "En pause",
     lineCount: (n) => `${n} ${n === 1 ? "ligne" : "lignes"}`,
     listening: "À l'écoute. Rien de nouveau à signaler.",
     notRunning: "Arrêté.",
+    updatedAgo: (s) => `Mis à jour il y a ${s} s`,
+    outdated: "Périmé",
     trigger: {
       new: "première fois",
       approaching: "se rapproche",
@@ -898,8 +916,8 @@ export const UI: Record<Locale, GuideStrings> = {
     corridorNote: "A linha tracejada marca o caminho",
     legendAria: "Níveis de perigo",
     stageAria: "Vista segmentada da cena",
-    feedSynthetic: "Cena sintética",
-    feedLive: "Câmera ao vivo",
+    feedSynthetic: "Modo demonstração",
+    feedLive: "Ao vivo",
 
     start: "Iniciar guia",
     pause: "Pausar guia",
@@ -907,6 +925,8 @@ export const UI: Record<Locale, GuideStrings> = {
     repeat: "Repetir",
     narrationOn: "Narração ativa",
     narrationOff: "Narração desligada",
+    dockStart: "Iniciar",
+    dockPause: "Pausar",
     dockDescribe: "Descrever",
     dockRepeat: "Repetir",
     dockNarrationOn: "Narração",
@@ -962,11 +982,13 @@ export const UI: Record<Locale, GuideStrings> = {
     helpSpoken:
       "Room Guide. Espaço inicia ou pausa. D descreve a vista agora. R repete o último anúncio. S liga ou desliga a narração automática. Um, dois ou três ajusta o detalhe: somente crítico, crítico e atenção, ou tudo. A inicia ou para o guia de mira. H abre ou fecha esta ajuda. Esc fecha a ajuda ou para o guia. Cada comando também tem um botão. Sinais sonoros: um par ascendente significa início, um par descendente pausa, um ping suave uma nova varredura, e um som grave duplo uma vista desatualizada. O guia de mira precisa da câmera e de um celular ou tablet com sensores de movimento. Nivelado significa que o celular está nivelado, não que o caminho está livre. O guia nunca diz que o caminho está livre.",
 
-    spokenNow: "Agora",
+    spokenNow: "Última orientação",
     pausedNow: "Pausado",
     lineCount: (n) => `${n} ${n === 1 ? "linha" : "linhas"}`,
     listening: "Ouvindo. Nada novo para relatar.",
     notRunning: "Parado.",
+    updatedAgo: (s) => `Atualizado há ${s} s`,
+    outdated: "Desatualizado",
     trigger: {
       new: "primeira vez",
       approaching: "se aproxima",
@@ -1070,8 +1092,8 @@ export const UI: Record<Locale, GuideStrings> = {
     corridorNote: "Die gestrichelte Linie markiert den Weg",
     legendAria: "Gefahrenstufen",
     stageAria: "Segmentierte Ansicht der Szene",
-    feedSynthetic: "Synthetische Szene",
-    feedLive: "Live-Kamera",
+    feedSynthetic: "Demo-Modus",
+    feedLive: "Live",
 
     start: "Guide starten",
     pause: "Guide pausieren",
@@ -1079,12 +1101,14 @@ export const UI: Record<Locale, GuideStrings> = {
     repeat: "Wiederholen",
     narrationOn: "Erzählung an",
     narrationOff: "Erzählung aus",
+    dockStart: "Starten",
+    dockPause: "Pausieren",
     dockDescribe: "Beschreiben",
     dockRepeat: "Nochmal",
     dockNarrationOn: "Erzählung",
     dockNarrationOff: "Stumm",
     useCamera: "Eigene Kamera",
-    useSynthetic: "Synthetische Szene",
+    useSynthetic: "Demo-Modus",
     aimCoach: "Ausrichtungshilfe",
     stopAiming: "Ausrichtung beenden",
     aimTitle: "Das Telefon mit Orientierungstönen ausrichten. Benötigt Kamera und Bewegungssensoren.",
@@ -1134,11 +1158,13 @@ export const UI: Record<Locale, GuideStrings> = {
     helpSpoken:
       "Room Guide. Leertaste startet oder pausiert. D beschreibt die aktuelle Ansicht. R wiederholt die letzte Ansage. S schaltet die automatische Erzählung ein oder aus. Eins, zwei oder drei stellt den Detailgrad ein: nur kritisch, kritisch und Vorsicht, oder alles. A startet oder beendet die Ausrichtungshilfe. H öffnet oder schließt diese Hilfe. Escape schließt die Hilfe oder hält den Guide an. Jeder Befehl hat auch eine Schaltfläche. Signaltöne: ein aufsteigendes Paar bedeutet Start, ein absteigendes Paar Pause, ein leiser Ping einen neuen Scan und ein tiefer Doppelton eine veraltete Ansicht. Die Ausrichtungshilfe benötigt die Kamera und ein Telefon oder Tablet mit Bewegungssensoren. Waagerecht bedeutet, dass das Telefon waagerecht ist, nicht dass der Weg frei ist. Der Guide sagt nie, dass der Weg frei ist.",
 
-    spokenNow: "Jetzt",
+    spokenNow: "Letzte Ansage",
     pausedNow: "Pausiert",
     lineCount: (n) => `${n} ${n === 1 ? "Zeile" : "Zeilen"}`,
     listening: "Ich höre zu. Nichts Neues zu melden.",
     notRunning: "Angehalten.",
+    updatedAgo: (s) => `Vor ${s} s aktualisiert`,
+    outdated: "Veraltet",
     trigger: {
       new: "neu gesehen",
       approaching: "kommt näher",

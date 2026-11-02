@@ -66,7 +66,9 @@ export function sentenceFor(group: SpatialObject[]): string {
   const article = articleFor(name, group.length, alreadyPlural);
   const where = bearingPhrase(head.bearingDeg);
   const dist = distancePhrase(head.distanceBand, head.distanceM);
-  return `${article}${name}, ${dist}, ${where}.`;
+  // "A few steps ahead, straight ahead" says it twice; the distance already carries it.
+  const bearing = where === "straight ahead" ? "" : `, ${where}`;
+  return `${article}${name}, ${dist}${bearing}.`;
 }
 
 /**

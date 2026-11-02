@@ -13,8 +13,16 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  color-scheme: dark;
+  color-scheme: light;
   scrollbar-color: var(--rg-border-strong) var(--rg-bg);
+  /* Keep focused anchors and scrollIntoView targets clear of the sticky header. */
+  scroll-padding-top: 84px;
+}
+
+@media (max-width: 1024px) {
+  html {
+    scroll-padding-top: calc(116px + env(safe-area-inset-top));
+  }
 }
 
 body {
@@ -30,17 +38,17 @@ body {
 }
 
 /*
-  Display type is a serif with optical sizing. The interface is a tool, but the
-  words it produces are prose — the typography says that out loud.
+  Prose and headings use Atkinson Hyperlegible: letterforms designed for readers
+  who need every character to stay distinct at a glance. The interface around
+  them uses Inter, which stays quiet at small sizes.
 */
 h1,
 h2,
 h3 {
   margin: 0;
   font-family: var(--rg-font-display);
-  font-weight: 400;
-  font-optical-sizing: auto;
-  line-height: 1.1;
+  font-weight: 700;
+  line-height: 1.15;
   letter-spacing: var(--rg-tracking-tight);
 }
 

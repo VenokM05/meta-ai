@@ -3,7 +3,7 @@
  * import.meta.env.PROD. Same-origin GETs only: the Meta proxy on :8787 is deliberately
  * bypassed, so a stale scene is never served as if it were live.
  */
-const CACHE = "roomguide-v2";
+const CACHE = "roomguide-v3";
 const SHELL = [
   "/",
   "/index.html",
@@ -12,6 +12,7 @@ const SHELL = [
   "/icon.svg",
   "/icon-192.png",
   "/icon-512.png",
+  "/maskable-512.png",
   "/apple-touch-icon.png",
 ];
 

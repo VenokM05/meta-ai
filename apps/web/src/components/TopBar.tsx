@@ -33,7 +33,7 @@ export function TopBar({
         </span>
         <div className="rg-brand-text">
           <span className="rg-brand-name">Room Guide</span>
-          <span className="rg-brand-sub">Spatial narration · SAM 3.1</span>
+          <span className="rg-brand-sub">A little more awareness</span>
         </div>
       </div>
 
@@ -68,12 +68,12 @@ export function TopBar({
           {provider === "mock" ? (
             <>
               <IconCamera width="14" height="14" />
-              <b>Synthetic</b>
+              <b>{t.feedSynthetic}</b>
             </>
           ) : (
             <>
               <span className="rg-pulse" />
-              <b>Live camera</b>
+              <b>{t.feedLive}</b>
             </>
           )}
         </span>
@@ -86,7 +86,7 @@ export function TopBar({
             <b data-numeric>{latencyMs > 0 ? `${(latencyMs / 1000).toFixed(1)} s` : "—"}</b>
           </span>
         )}
-        <span className="rg-chip">
+        <span className="rg-chip rg-loop-chip">
           <span className="rg-chip-label">Loop</span>
           <b data-numeric>{fps > 0 ? `${fps.toFixed(1)} fps` : "idle"}</b>
         </span>
