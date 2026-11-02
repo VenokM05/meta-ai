@@ -78,6 +78,51 @@ Mock mode needs no key and no proxy: synthetic scenes exercise the same geometry
 narration, sonification, and metric paths. The header says `Synthetic` for exactly that
 reason, and no latency figure is shown because no model call happens.
 
+### Operating it without sight
+
+The interface is built to be used with the screen off:
+
+- **Space** starts or pauses, **D** describes the view now, **R** repeats the last line,
+  **S** toggles automatic narration, **H** opens spoken help, **Esc** stops.
+- **1 / 2 / 3** set detail: critical only, critical + caution, or everything. Detail filters
+  what is spoken, not what is detected.
+- Earcons carry state: a rising pair means start, a falling pair means pause, one soft ping
+  means a fresh scan, and a low double thud means the view is older than 12 s. The stale tone
+  is followed by a spoken warning.
+- **A** starts aim coaching: the phone's motion sensors drive a tick that rises as the phone
+  nears level, and stops at level. Spoken cues name the tilt to correct. It needs the camera
+  on, a device with motion sensors, and (on iPhone) motion permission. *Level* means the phone
+  is level, not that the path is clear.
+- **Screen reader mode** in Audio settings keeps SpeechSynthesis silent so VoiceOver or NVDA
+  is the only voice. Live regions remain for narration, status, and failures.
+- Listener preferences persist in `localStorage`, so a reload does not silently change what
+  gets announced.
+
+### Languages
+
+Speech and interface text follow the phone's locale on first run; Audio settings carries an
+override. English, Spanish, French, Portuguese, and German cover narration, help, status,
+settings, and aim coaching. The spoken voice is picked from the device's installed
+`SpeechSynthesis` voices by language tag, so a German locale gets a German voice rather than
+accented English.
+
+Two deliberate exceptions: diagnostics and telemetry stay in English so measurements remain
+comparable, and a concept with no local term falls back to its English label.
+
+### On a phone
+
+The guide is installable as a PWA and runs standalone, without browser chrome. Once installed
+it starts offline: a service worker caches the shell and the hashed bundle at install and
+prunes assets from earlier builds.
+
+- A fixed five-button dock — start/pause, describe, repeat, narration, help — sits within
+  thumb reach at the bottom. Desktop keeps the full control panel.
+- Safe-area insets keep the dock above the home indicator and the header below the notch.
+- The screen wake lock is held while the guide runs and re-acquired when the tab becomes
+  visible again, so narration does not stop because the phone dimmed.
+- Dock labels are shorter than the page buttons so five columns fit a 320px screen without
+  clipping; nothing is truncated, only reworded.
+
 ### Scripts
 
 | Command | What it does |
@@ -141,6 +186,10 @@ fixtures with hand-labelled photographs is the next step before any accuracy cla
   changes that.
 - **Not tested with low-vision users yet.** Until it is, every claim about real-world
   usefulness is a hypothesis.
+- **Translations are unreviewed.** Spanish, French, Portuguese, and German were written to
+  match the English wording, not by native speakers or with assistive-tech users. Treat the
+  non-English narration as a draft until someone who uses a screen reader in that language
+  has read it.
 
 ## Next
 

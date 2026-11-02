@@ -10,3 +10,12 @@ createRoot(document.getElementById("root")!).render(
     <App />
   </StrictMode>,
 );
+
+// Production only: a dev service worker would cache Vite's module graph and hide HMR.
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {
+      // Offline shell is a bonus, never a blocker for the live guide.
+    });
+  });
+}

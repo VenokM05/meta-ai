@@ -138,3 +138,28 @@ export const IconKeyboard = (p: P) => (
     <path d="M6.5 10h.01M10 10h.01M13.5 10h.01M17 10h.01M8 14h8" />
   </Svg>
 );
+
+export const IconRepeat = (p: P) => (
+  <Svg {...p}>
+    <path d="m17 3.5 3 3-3 3" />
+    <path d="M20 6.5H8.5A4.5 4.5 0 0 0 4 11v1" />
+    <path d="m7 20.5-3-3 3-3" />
+    <path d="M4 17.5h11.5A4.5 4.5 0 0 0 20 13v-1" />
+  </Svg>
+);
+
+export const IconTarget = (p: P) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="7.5" />
+    <circle cx="12" cy="12" r="2.2" />
+    <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3" />
+  </Svg>
+);
+
+export const IconHelp = (p: P) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M9.4 9.2a2.7 2.7 0 1 1 3.6 2.5c-.6.25-1 .8-1 1.45v.5" />
+    <circle cx="12" cy="17" r="1" fill="currentColor" stroke="none" />
+  </Svg>
+);

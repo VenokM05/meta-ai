@@ -4,6 +4,7 @@ import { TopBar, type RouteName } from "./components/TopBar";
 import { GuideScreen } from "./screens/GuideScreen";
 import { FrameScreen } from "./screens/FrameScreen";
 import { EvalScreen } from "./screens/EvalScreen";
+import { UI } from "./lib/i18n";
 
 /** Hand-rolled hash routing: three screens, deep-linkable, no router dependency. */
 function routeFromHash(): RouteName {
@@ -14,6 +15,7 @@ function routeFromHash(): RouteName {
 export function App() {
   const [route, setRoute] = useState<RouteName>(routeFromHash);
   const guide = useGuide();
+  const t = UI[guide.locale];
 
   useEffect(() => {
     const onHash = () => setRoute(routeFromHash());
@@ -32,7 +34,7 @@ export function App() {
   return (
     <div className="rg-app">
       <a className="rg-skip-link" href="#rg-main">
-        Skip to main content
+        {t.skipLink}
       </a>
 
       <TopBar
@@ -41,6 +43,7 @@ export function App() {
         provider={guide.provider}
         fps={guide.stats.fps}
         latencyMs={guide.stats.latencyMs}
+        locale={guide.locale}
       />
 
       <main id="rg-main" tabIndex={-1} style={{ display: "flex", flexDirection: "column", flex: 1 }}>
@@ -51,7 +54,7 @@ export function App() {
 
       <footer className="rg-foot">
         <span>Room Guide · built on Meta SAM 3.1</span>
-        <span>Geometry turned into speech. Absence is never asserted.</span>
+        <span>{t.footerTagline}</span>
       </footer>
     </div>
   );

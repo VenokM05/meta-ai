@@ -172,6 +172,8 @@ export class NarrationEngine {
           tier: head.tier,
           bearingDeg: head.bearingDeg,
           distanceBand: deepest,
+          count: group.length,
+          distanceM: head.distanceM,
           timestampMs: nowMs,
           trigger,
         },

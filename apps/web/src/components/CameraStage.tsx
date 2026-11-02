@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
 import type { SpatialObject } from "@roomguide/core";
+import { UI, conceptLabel, type Locale } from "../lib/i18n";
 
 const VW = 100;
 const VH = 56.25;
@@ -45,6 +46,7 @@ export function CameraStage({
   soundingConcepts,
   provider,
   videoRef: externalRef,
+  locale = "en",
 }: {
   objects: SpatialObject[];
   videoStream: MediaStream | null;
@@ -55,9 +57,11 @@ export function CameraStage({
    * holds the ref, rather than reaching into the DOM of a component that only displays it.
    */
   videoRef?: RefObject<HTMLVideoElement | null>;
+  locale?: Locale;
 }) {
   const localRef = useRef<HTMLVideoElement | null>(null);
   const videoRef = externalRef ?? localRef;
+  const t = UI[locale];
 
   useEffect(() => {
     const el = videoRef.current;
@@ -80,7 +84,7 @@ export function CameraStage({
         viewBox={`0 0 ${VW} ${VH}`}
         preserveAspectRatio="none"
         role="img"
-        aria-label="Segmented view of the scene"
+        aria-label={t.stageAria}
       >
         {/* Forward walking corridor: everything inside is treated as "in my path". */}
         <polygon className="rg-corridor" points={`${VW / 2},${corridorApexY} ${VW - 8},${VH} 8,${VH}`} />
@@ -98,11 +102,11 @@ export function CameraStage({
 
       <div className="rg-feed-tag" data-tone={provider === "mock" ? "mock" : "live"}>
         {provider === "mock" ? (
-          "Synthetic feed"
+          t.feedSynthetic
         ) : (
           <>
             <span className="rg-live-dot" aria-hidden="true" />
-            Live camera
+            {t.feedLive}
           </>
         )}
       </div>
@@ -122,7 +126,7 @@ export function CameraStage({
               top: `${clampPct(o.bbox.y * 100 - 5)}%`,
             }}
           >
-            {o.label}
+            {conceptLabel(o.concept, locale, o.label)}
           </span>
         ))}
       </div>

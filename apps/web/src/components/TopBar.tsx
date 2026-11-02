@@ -1,12 +1,7 @@
 import { IconGauge, IconCamera, IconRadar, IconFrame } from "../lib/icons";
+import { UI, type Locale } from "../lib/i18n";
 
 export type RouteName = "guide" | "frame" | "quality";
-
-const NAV: Array<{ route: RouteName; label: string; Icon: typeof IconRadar }> = [
-  { route: "guide", label: "Live guide", Icon: IconRadar },
-  { route: "frame", label: "Single frame", Icon: IconFrame },
-  { route: "quality", label: "Quality", Icon: IconGauge },
-];
 
 export function TopBar({
   route,
@@ -14,13 +9,22 @@ export function TopBar({
   provider,
   fps,
   latencyMs,
+  locale,
 }: {
   route: RouteName;
   onNavigate: (r: RouteName) => void;
   provider: "mock" | "meta";
   fps: number;
   latencyMs: number;
+  locale: Locale;
 }) {
+  const t = UI[locale];
+  const nav: Array<{ route: RouteName; label: string; Icon: typeof IconRadar }> = [
+    { route: "guide", label: t.navGuide, Icon: IconRadar },
+    { route: "frame", label: t.navFrame, Icon: IconFrame },
+    { route: "quality", label: t.navQuality, Icon: IconGauge },
+  ];
+
   return (
     <header className="rg-topbar">
       <div className="rg-brand">
@@ -33,8 +37,8 @@ export function TopBar({
         </div>
       </div>
 
-      <nav className="rg-nav" aria-label="Primary">
-        {NAV.map(({ route: r, label, Icon }, i) => (
+      <nav className="rg-nav" aria-label={t.navPrimary}>
+        {nav.map(({ route: r, label, Icon }, i) => (
           <button
             key={r}
             type="button"

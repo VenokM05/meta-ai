@@ -286,6 +286,12 @@ html[data-contrast="high"] .rg-app {
   border-color: transparent;
 }
 
+.rg-btn--active {
+  border-color: var(--rg-accent-line);
+  background: var(--rg-accent-dim);
+  color: var(--rg-accent);
+}
+
 .rg-btn svg {
   width: 17px;
   height: 17px;
@@ -386,6 +392,25 @@ html[data-contrast="high"] .rg-app {
   justify-content: flex-start;
   padding-inline: var(--rg-sp-5);
   font-size: var(--rg-text-base);
+}
+
+.rg-hero-side .rg-btn--wide {
+  grid-column: 1 / -1;
+}
+
+/* A quiet footer action: still a 44px target, but reads as a utility, not a fifth command. */
+.rg-hero-side .rg-btn--ghost.rg-btn--wide {
+  justify-content: flex-end;
+  padding-inline: var(--rg-sp-2);
+  color: var(--rg-text-3);
+  font-family: var(--rg-font-data);
+  font-size: var(--rg-text-xs);
+  letter-spacing: var(--rg-tracking-label);
+  text-transform: uppercase;
+}
+
+.rg-hero-side .rg-btn--ghost.rg-btn--wide:hover {
+  color: var(--rg-text-1);
 }
 
 /* ---------- Stage legend ---------- */
@@ -525,6 +550,295 @@ html[data-contrast="high"] .rg-app {
   color: var(--rg-text-3);
 }
 
+/* ---------- Spoken status line (visual mirror of the live region) ---------- */
+.rg-voice-status {
+  display: flex;
+  align-items: baseline;
+  gap: var(--rg-sp-2);
+  font-family: var(--rg-font-data);
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--rg-text-2);
+}
+
+.rg-voice-status-dot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rg-text-3);
+}
+
+/* The full sentence lives in the live region; the visual mirror stays a caption. */
+.rg-voice-status-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.rg-voice-status-dot[data-on="true"] {
+  background: var(--rg-accent);
+  box-shadow: 0 0 0 3px var(--rg-accent-dim);
+}
+
+/* ---------- Help and audio settings ---------- */
+.rg-help {
+  padding: var(--rg-sp-5);
+  background: var(--rg-surface-1);
+  border: 1px solid var(--rg-border);
+  border-radius: var(--rg-r-3);
+  box-shadow: var(--rg-shadow-1);
+}
+
+.rg-help-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rg-sp-3);
+  margin-bottom: var(--rg-sp-3);
+}
+
+.rg-help-title {
+  font-size: var(--rg-text-xl);
+  outline: none;
+}
+
+.rg-help-lead {
+  max-width: 64ch;
+  font-size: var(--rg-text-sm);
+  color: var(--rg-text-2);
+}
+
+.rg-help-list {
+  display: grid;
+  gap: var(--rg-sp-2);
+  margin: var(--rg-sp-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rg-help-list li {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--rg-sp-3);
+  font-size: var(--rg-text-sm);
+  color: var(--rg-text-2);
+}
+
+.rg-help-note {
+  max-width: 72ch;
+  margin-top: var(--rg-sp-4);
+  padding-top: var(--rg-sp-4);
+  border-top: 1px solid var(--rg-border);
+  font-size: var(--rg-text-sm);
+  color: var(--rg-text-3);
+}
+
+/* Consecutive notes share one divider instead of stacking rules. */
+.rg-help-note + .rg-help-note {
+  margin-top: var(--rg-sp-3);
+  padding-top: 0;
+  border-top: 0;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 28px;
+  padding: 2px 7px;
+  background: var(--rg-surface-2);
+  border: 1px solid var(--rg-border-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--rg-r-1);
+  font-family: var(--rg-font-data);
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--rg-text-1);
+  white-space: nowrap;
+}
+
+.rg-audio-settings {
+  background: var(--rg-surface-1);
+  border: 1px solid var(--rg-border);
+  border-radius: var(--rg-r-2);
+}
+
+.rg-audio-settings summary {
+  display: flex;
+  align-items: center;
+  gap: var(--rg-sp-2);
+  min-height: var(--rg-hit-min);
+  padding: var(--rg-sp-2) var(--rg-sp-4);
+  font-size: var(--rg-text-sm);
+  font-weight: 500;
+  color: var(--rg-text-2);
+  cursor: pointer;
+  list-style: none;
+}
+
+.rg-audio-settings summary::-webkit-details-marker {
+  display: none;
+}
+
+.rg-audio-settings summary::after {
+  content: "+";
+  margin-left: auto;
+  font-family: var(--rg-font-data);
+  font-size: var(--rg-text-sm);
+  color: var(--rg-accent);
+}
+
+.rg-audio-settings[open] summary::after {
+  content: "−";
+}
+
+.rg-audio-settings summary:hover {
+  color: var(--rg-text-1);
+}
+
+.rg-audio-settings summary svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--rg-text-3);
+}
+
+.rg-audio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--rg-sp-4);
+  padding: var(--rg-sp-3) var(--rg-sp-4) var(--rg-sp-4);
+  border-top: 1px solid var(--rg-border);
+}
+
+.rg-audio-grid select {
+  width: 100%;
+}
+
+.rg-check {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: flex-start;
+  gap: var(--rg-sp-3);
+  font-size: var(--rg-text-sm);
+  color: var(--rg-text-2);
+  cursor: pointer;
+}
+
+.rg-check input {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--rg-accent);
+}
+
+.rg-check span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rg-check b {
+  font-weight: 600;
+  color: var(--rg-text-1);
+}
+
+.rg-check small {
+  font-size: var(--rg-text-xs);
+  line-height: 1.4;
+  color: var(--rg-text-3);
+}
+
+.rg-audio-note {
+  padding: 0 var(--rg-sp-4) var(--rg-sp-4);
+  font-size: var(--rg-text-xs);
+  color: var(--rg-text-3);
+}
+
+/* ---------- Aim coach: a bubble level for sighted helpers ---------- */
+.rg-aim {
+  display: flex;
+  align-items: center;
+  gap: var(--rg-sp-4);
+  padding: var(--rg-sp-3) var(--rg-sp-4);
+  background: var(--rg-surface-1);
+  border: 1px solid var(--rg-border);
+  border-radius: var(--rg-r-2);
+}
+
+.rg-aim.is-level {
+  border-color: var(--rg-accent-line);
+}
+
+.rg-aim-level {
+  position: relative;
+  flex-shrink: 0;
+  width: 58px;
+  height: 58px;
+  background: var(--rg-surface-2);
+  border: 1px solid var(--rg-border-strong);
+  border-radius: 50%;
+}
+
+.rg-aim-axis {
+  position: absolute;
+  background: var(--rg-border);
+}
+
+.rg-aim-axis--h {
+  left: 8px;
+  right: 8px;
+  top: 50%;
+  height: 1px;
+}
+
+.rg-aim-axis--v {
+  top: 8px;
+  bottom: 8px;
+  left: 50%;
+  width: 1px;
+}
+
+.rg-aim-bubble {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  background: var(--rg-text-3);
+  border-radius: 50%;
+  transition:
+    transform 120ms linear,
+    background var(--rg-fast) var(--rg-ease-out);
+}
+
+.rg-aim.is-level .rg-aim-bubble {
+  background: var(--rg-accent);
+  box-shadow: 0 0 0 4px var(--rg-accent-dim);
+}
+
+.rg-aim-read {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rg-aim-read b {
+  font-size: var(--rg-text-sm);
+  font-weight: 600;
+  color: var(--rg-text-1);
+}
+
+.rg-aim-read span {
+  font-family: var(--rg-font-data);
+  font-size: 10px;
+  color: var(--rg-text-3);
+}
+
 /* ---------- Pipeline readout ---------- */
 .rg-readout-strip {
   display: grid;
@@ -558,6 +872,10 @@ html[data-contrast="high"] .rg-app {
   font-size: 1.375rem;
   line-height: 1.1;
   color: var(--rg-text-1);
+}
+
+.rg-readout dd[data-stale] {
+  color: var(--rg-caution);
 }
 
 /* ---------- Lower deck ---------- */
@@ -1162,6 +1480,16 @@ html[data-contrast="high"] .rg-app {
   gap: var(--rg-sp-2);
 }
 
+.rg-field--wide {
+  grid-column: 1 / -1;
+}
+
+.rg-field-hint {
+  font-size: var(--rg-text-xs);
+  line-height: 1.4;
+  color: var(--rg-text-3);
+}
+
 .rg-field label {
   font-family: var(--rg-font-data);
   font-size: 10px;
@@ -1722,6 +2050,12 @@ main:focus {
     min-height: 150px;
   }
 
+  /* Once the side column becomes two columns, these read better full width. */
+  .rg-hero-side > .rg-help,
+  .rg-hero-side > .rg-audio-settings {
+    grid-column: 1 / -1;
+  }
+
   .rg-sonar-hud {
     order: 4;
     position: static;
@@ -1819,6 +2153,18 @@ main:focus {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .rg-audio-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rg-help {
+    padding: var(--rg-sp-4);
+  }
+
+  .rg-help-list li {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
   /*
     Four columns cannot hold a readable sentence at phone width. Stack each row
     and print the header inline instead of hiding the data behind a side-scroll.
@@ -1912,5 +2258,96 @@ main:focus {
   .rg-foot {
     flex-direction: column;
     gap: var(--rg-sp-1);
+  }
+}
+
+/* ---------- Phone shell: safe areas and one-handed command dock ---------- */
+.rg-dock {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .rg-app {
+    /* Reserve room for the dock plus the home-indicator inset. */
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+
+  .rg-topbar {
+    padding-top: max(var(--rg-sp-2), env(safe-area-inset-top));
+  }
+
+  /* Keyboard hints are dead weight on a touch-only screen. */
+  .rg-shortcut-note {
+    display: none;
+  }
+
+  .rg-dock {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: var(--rg-z-overlay);
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+    background: var(--rg-glass);
+    backdrop-filter: blur(20px) saturate(120%);
+    border-top: 1px solid var(--rg-border);
+  }
+
+  .rg-dock-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 56px;
+    padding: 6px 2px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--rg-text-2);
+    font-family: var(--rg-font-data);
+    font-size: 10px;
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+    text-align: center;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .rg-dock-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .rg-dock-btn:hover {
+    color: var(--rg-text-1);
+  }
+
+  .rg-dock-btn[aria-pressed="true"] {
+    color: var(--rg-accent);
+  }
+
+  .rg-dock-btn--primary {
+    background: var(--rg-accent);
+    color: var(--rg-accent-ink);
+  }
+
+  .rg-dock-btn--primary:hover {
+    color: var(--rg-accent-ink);
+  }
+
+  .rg-dock-btn--active {
+    background: var(--rg-accent-dim);
+    color: var(--rg-accent);
+  }
+}
+
+/* 320px-class phones leave ~58px per dock button; only German's longest label
+   needs the extra 10% to stay on one line. 360px and up keeps the 10px size. */
+@media (max-width: 340px) {
+  .rg-dock-btn {
+    font-size: 9px;
+    letter-spacing: 0;
   }
 }

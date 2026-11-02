@@ -8,11 +8,29 @@ import {
   VOCABULARY,
   sceneToSpatial,
   summarizeScene,
+  type HazardTier,
   type NarrationLine,
   type Scene,
   type SpatialObject,
 } from "@roomguide/core";
-import { blip, ensureAudio, speak, stopSpeech } from "../lib/audio";
+import {
+  announce as announceAudio,
+  blip,
+  earcon,
+  ensureAudio,
+  setAudioPreferences,
+  speak,
+  stopSpeech,
+} from "../lib/audio";
+import {
+  LOCALE_TAGS,
+  UI,
+  conceptLabel,
+  describeSummary,
+  lineText,
+  localeSpec,
+  type Locale,
+} from "../lib/i18n";
 import { mockSceneAt } from "../lib/mockScenes";
 import {
   LIVE_CONCEPTS,
@@ -21,6 +39,13 @@ import {
   runSweep,
   type ConceptOutcome,
 } from "../lib/metaProvider";
+import {
+  loadPreferences,
+  savePreferences,
+  type DetailLevel,
+  type Preferences,
+  type SpeechSpeed,
+} from "../lib/preferences";
 
 /** Parallel per-concept requests. Above this, rate limiting becomes the failure mode. */
 const SWEEP_CONCURRENCY = 4;
@@ -31,6 +56,15 @@ const SWEEP_CONCURRENCY = 4;
  * also stops a fast-failing proxy from being retried every loop tick.
  */
 const LIVE_SWEEP_INTERVAL_MS = 4_000;
+
+/**
+ * Geometry older than this is outside the loop's normal worst case (~10s), so the guide
+ * says so once rather than letting old observations sound current.
+ */
+export const STALE_AFTER_MS = 12_000;
+
+/** How long a freshly started live loop waits for its first sweep before flagging it. */
+const FIRST_SWEEP_GRACE_MS = 6_000;
 
 export interface GuideStats {
   fps: number;
@@ -61,12 +95,25 @@ interface LoopCounters {
 
 const HISTORY_CAP = 40;
 
+function tierAllowed(tier: HazardTier, detail: DetailLevel): boolean {
+  if (detail === "all") return true;
+  if (detail === "caution") return tier !== "informative";
+  return tier === "critical";
+}
+
 export function useGuide() {
+  const [prefs, setPrefs] = useState<Preferences>(loadPreferences);
+  const prefsRef = useRef(prefs);
+  prefsRef.current = prefs;
+
   const [running, setRunning] = useState(false);
+  const runningRef = useRef(false);
   const [objects, setObjects] = useState<SpatialObject[]>([]);
   const [history, setHistory] = useState<NarrationLine[]>([]);
   const [activeLine, setActiveLine] = useState<NarrationLine | null>(null);
   const [soundingIds, setSoundingIds] = useState<Set<string>>(new Set());
+  const [statusText, setStatusText] = useState("");
+  const [viewAgeMs, setViewAgeMs] = useState<number | null>(null);
   const [stats, setStats] = useState<GuideStats>({
     fps: 0,
     latencyMs: 0,
@@ -75,8 +122,6 @@ export function useGuide() {
     hitRate: 0,
     objectsTracked: 0,
   });
-  const [speechOn, setSpeechOn] = useState(true);
-  const [sonarOn, setSonarOn] = useState(true);
 
   // Camera state lives here rather than in the screen because the provider switch is
   // pipeline state: turning the camera on is what makes a sweep real.
@@ -95,10 +140,15 @@ export function useGuide() {
   const gate = useMemo(() => new KeyframeGate(DEFAULT_GATE), []);
   const rafRef = useRef<number | null>(null);
   const lastScene = useRef<Scene | null>(null);
+  const lastLine = useRef<NarrationLine | null>(null);
+  const lastScanAt = useRef<number | null>(null);
+  const staleNotified = useRef(false);
   const sweepBusy = useRef(false);
   const sweepAbort = useRef<AbortController | null>(null);
   const sweepGen = useRef(0);
   const nextSweepAt = useRef(0);
+  const firstSweepTimer = useRef<number | null>(null);
+  const [firstSweepSlow, setFirstSweepSlow] = useState(false);
   const counters = useRef<LoopCounters>({
     segmented: 0,
     coasted: 0,
@@ -107,21 +157,69 @@ export function useGuide() {
     lastFpsAt: 0,
     lastFrames: 0,
   });
-  const speechRef = useRef(speechOn);
-  const sonarRef = useRef(sonarOn);
-  speechRef.current = speechOn;
-  sonarRef.current = sonarOn;
 
-  const emit = useCallback((lines: NarrationLine[]) => {
-    if (lines.length === 0) return;
-    const [head, ...rest] = lines;
-    setActiveLine(head!);
-    setHistory((prev) => [head!, ...rest, ...prev].slice(0, HISTORY_CAP));
-    setSoundingIds(new Set(lines.map((l) => l.concept)));
-    if (speechRef.current) speak(head!.text, head!.tier, head!.tier === "critical");
-    if (sonarRef.current) for (const l of lines) blip(l.tier, l.bearingDeg);
-    window.setTimeout(() => setSoundingIds(new Set()), 900);
+  useEffect(() => {
+    savePreferences(prefs);
+  }, [prefs]);
+
+  useEffect(() => {
+    setAudioPreferences({ speed: prefs.speed, earconsOn: prefs.earconsOn, locale: prefs.locale });
+  }, [prefs.speed, prefs.earconsOn, prefs.locale]);
+
+  // Screen readers and the browser's own UI read this to choose pronunciation.
+  useEffect(() => {
+    document.documentElement.lang = LOCALE_TAGS[prefs.locale];
+  }, [prefs.locale]);
+
+  const updatePrefs = useCallback((patch: Partial<Preferences>) => {
+    setPrefs((p) => ({ ...p, ...patch }));
   }, []);
+
+  /** System messages: spoken unless a screen reader owns the voice, always announced to it. */
+  const sayStatus = useCallback((text: string, interrupt = false) => {
+    setStatusText(text);
+    if (prefsRef.current.screenReaderMode) return;
+    announceAudio(text, interrupt);
+  }, []);
+
+  /** Speech without a status update, for content that is already visible on screen. */
+  const speakText = useCallback((text: string, interrupt = false) => {
+    if (prefsRef.current.screenReaderMode) return;
+    announceAudio(text, interrupt);
+  }, []);
+
+  const cue = useCallback((kind: Parameters<typeof earcon>[0]) => {
+    if (!prefsRef.current.earconsOn) return;
+    earcon(kind);
+  }, []);
+
+  const clearFirstSweepTimer = useCallback(() => {
+    if (firstSweepTimer.current !== null) window.clearTimeout(firstSweepTimer.current);
+    firstSweepTimer.current = null;
+    setFirstSweepSlow(false);
+  }, []);
+
+  const emit = useCallback(
+    (lines: NarrationLine[]) => {
+      const delivered = lines.filter((l) => tierAllowed(l.tier, prefsRef.current.detail));
+      if (delivered.length === 0) return;
+      const [head, ...rest] = delivered;
+      lastLine.current = head!;
+      setActiveLine(head!);
+      setHistory((prev) => [head!, ...rest, ...prev].slice(0, HISTORY_CAP));
+      setSoundingIds(new Set(delivered.map((l) => l.concept)));
+      if (!prefsRef.current.screenReaderMode) {
+        if (prefsRef.current.speechOn) {
+          speak(lineText(head!, prefsRef.current.locale), head!.tier, head!.tier === "critical");
+        }
+        if (prefsRef.current.earconsOn) for (const l of delivered) blip(l.tier, l.bearingDeg);
+      } else if (prefsRef.current.earconsOn) {
+        for (const l of delivered) blip(l.tier, l.bearingDeg);
+      }
+      window.setTimeout(() => setSoundingIds(new Set()), 900);
+    },
+    [],
+  );
 
   const startSweep = useCallback(() => {
     const el = videoRef.current;
@@ -142,6 +240,7 @@ export function useGuide() {
         // repopulate the scene or speak after the user stopped the loop.
         if (generation !== sweepGen.current) return;
         const c = counters.current;
+        clearFirstSweepTimer();
         setSweep({ inFlight: false, lastDurationMs: result.durationMs, outcomes: result.outcomes });
 
         const failed = result.outcomes.filter((o) => !o.ok);
@@ -159,6 +258,10 @@ export function useGuide() {
             coasted: c.coasted,
             objectsTracked: next.length,
           }));
+          lastScanAt.current = completedAt;
+          staleNotified.current = false;
+          setViewAgeMs(0);
+          cue("scan");
           emit(engine.update(next, completedAt));
         } else {
           c.segmented += 1;
@@ -171,11 +274,11 @@ export function useGuide() {
         } else if (failed.length > 0) {
           // Partial failure is the dangerous case: the screen shows six watched classes but
           // only four answered, and silence about a class reads as "nothing there".
-          setCameraError(
-            `No answer for ${failed
-              .map((f) => CONCEPTS_BY_ID.get(f.concept)?.label ?? f.concept)
-              .join(", ")} — those classes are untracked, not absent.`,
-          );
+          const locale = prefsRef.current.locale;
+          const labels = failed
+            .map((f) => conceptLabel(f.concept, locale, CONCEPTS_BY_ID.get(f.concept)?.label ?? f.concept))
+            .join(", ");
+          setCameraError(UI[locale].partialFailure(labels));
         }
       })
       .catch(() => {
@@ -189,7 +292,7 @@ export function useGuide() {
         sweepAbort.current = null;
         nextSweepAt.current = performance.now() + LIVE_SWEEP_INTERVAL_MS;
       });
-  }, [emit, engine, gate]);
+  }, [clearFirstSweepTimer, cue, emit, engine, gate]);
 
   const step = useCallback(
     (nowMs: number) => {
@@ -265,10 +368,40 @@ export function useGuide() {
     };
   }, [running, step]);
 
+  /**
+   * View age and the staleness alarm. One tick per second is enough for both the readout
+   * and a warning that has to interrupt a user's belief that the picture is current.
+   */
+  useEffect(() => {
+    if (!running) return;
+    const id = window.setInterval(() => {
+      const at = lastScanAt.current;
+      if (at === null) return;
+      const age = performance.now() - at;
+      setViewAgeMs(age);
+      if (age >= STALE_AFTER_MS && !staleNotified.current) {
+        staleNotified.current = true;
+        cue("stale");
+        sayStatus(UI[prefsRef.current.locale].stale(Math.round(age / 1000)));
+      }
+    }, 1_000);
+    return () => window.clearInterval(id);
+  }, [cue, running, sayStatus]);
+
   const start = useCallback(() => {
     ensureAudio();
+    const firstRun = !prefsRef.current.onboarded;
     setCameraError(null);
     setSweep({ inFlight: false, lastDurationMs: null, outcomes: [] });
+    setFirstSweepSlow(false);
+    if (firstSweepTimer.current !== null) window.clearTimeout(firstSweepTimer.current);
+    firstSweepTimer.current = window.setTimeout(
+      () => setFirstSweepSlow(true),
+      FIRST_SWEEP_GRACE_MS,
+    );
+    lastScanAt.current = null;
+    staleNotified.current = false;
+    setViewAgeMs(null);
     counters.current = {
       segmented: 0,
       coasted: 0,
@@ -279,40 +412,79 @@ export function useGuide() {
     };
     engine.reset();
     gate.reset();
+    runningRef.current = true;
     setRunning(true);
-  }, [engine, gate]);
+    const t = UI[prefsRef.current.locale];
+    if (firstRun) {
+      updatePrefs({ onboarded: true });
+      sayStatus(t.welcome, true);
+    } else {
+      sayStatus(t.started, true);
+    }
+    cue("start");
+  }, [cue, engine, gate, sayStatus, updatePrefs]);
 
-  const stop = useCallback(() => {
-    setRunning(false);
-    // A sweep that lands after pause must not speak or repopulate the scene.
-    sweepGen.current += 1;
-    sweepAbort.current?.abort();
-    sweepAbort.current = null;
-    sweepBusy.current = false;
-    stopSpeech();
-    // The guarded completion will not run, so clear the in-flight flag here.
-    setSweep((s) => ({ ...s, inFlight: false }));
-    // A stale "6.0 fps" reads as a running loop, which is the one thing this status
-    // row must never imply when the pipeline is actually halted.
-    setStats((s) => ({ ...s, fps: 0, latencyMs: 0 }));
-  }, []);
+  const stop = useCallback(
+    (spoken = true) => {
+      const wasRunning = runningRef.current;
+      runningRef.current = false;
+      setRunning(false);
+      // A sweep that lands after pause must not speak or repopulate the scene.
+      sweepGen.current += 1;
+      sweepAbort.current?.abort();
+      sweepAbort.current = null;
+      sweepBusy.current = false;
+      stopSpeech();
+      clearFirstSweepTimer();
+      // The guarded completion will not run, so clear the in-flight flag here.
+      setSweep((s) => ({ ...s, inFlight: false }));
+      // A stale "6.0 fps" reads as a running loop, which is the one thing this status
+      // row must never imply when the pipeline is actually halted.
+      setStats((s) => ({ ...s, fps: 0, latencyMs: 0 }));
+      if (spoken && wasRunning) {
+        sayStatus(UI[prefsRef.current.locale].guidePaused, true);
+        cue("stop");
+      }
+    },
+    [clearFirstSweepTimer, cue, sayStatus],
+  );
 
   const describeNow = useCallback(() => {
     const tracked = lastScene.current ? sceneToSpatial(lastScene.current) : [];
+    const locale = prefsRef.current.locale;
+    const text = describeSummary(tracked, locale, summarizeScene(tracked));
     const line: NarrationLine = {
       id: `manual-${Date.now()}`,
-      text: summarizeScene(tracked),
+      text,
       concept: "summary",
       tier: tracked.some((o) => o.tier === "critical") ? "critical" : "informative",
       bearingDeg: tracked[0]?.bearingDeg ?? 0,
       distanceBand: tracked[0]?.distanceBand ?? "unknown",
+      count: tracked.length,
+      distanceM: tracked[0]?.distanceM ?? null,
       timestampMs: performance.now(),
       trigger: "manual",
     };
+    lastLine.current = line;
     setActiveLine(line);
     setHistory((prev) => [line, ...prev].slice(0, HISTORY_CAP));
-    if (speechRef.current) speak(line.text, line.tier, true);
+    // Explicit requests always answer, even with ambient narration muted; a screen
+    // reader hears it through the live region instead of competing synthesis.
+    if (prefsRef.current.screenReaderMode) setStatusText(text);
+    else speak(text, line.tier, true);
   }, []);
+
+  const repeatLast = useCallback(() => {
+    const line = lastLine.current;
+    if (!line) {
+      sayStatus(UI[prefsRef.current.locale].nothingToRepeat);
+      return;
+    }
+    const text = lineText(line, prefsRef.current.locale);
+    setActiveLine(line);
+    if (prefsRef.current.screenReaderMode) setStatusText(text);
+    else speak(text, line.tier, true);
+  }, [sayStatus]);
 
   const toggleCamera = useCallback(async () => {
     // A provider switch must not coast across feeds: narrating the last synthetic scene as
@@ -322,6 +494,9 @@ export function useGuide() {
     sweepAbort.current = null;
     sweepBusy.current = false;
     lastScene.current = null;
+    lastScanAt.current = null;
+    staleNotified.current = false;
+    setViewAgeMs(null);
     nextSweepAt.current = 0;
     gate.reset();
     engine.reset();
@@ -332,6 +507,7 @@ export function useGuide() {
     // Narration from the previous feed is not evidence about this one.
     setHistory([]);
     setSweep({ inFlight: false, lastDurationMs: null, outcomes: [] });
+    clearFirstSweepTimer();
     counters.current = {
       segmented: 0,
       coasted: 0,
@@ -341,11 +517,20 @@ export function useGuide() {
       lastFrames: 0,
     };
     setStats({ fps: 0, latencyMs: 0, segmented: 0, coasted: 0, hitRate: 0, objectsTracked: 0 });
+    // A running loop needs a fresh grace window for the new feed's first sweep.
+    if (runningRef.current) {
+      firstSweepTimer.current = window.setTimeout(
+        () => setFirstSweepSlow(true),
+        FIRST_SWEEP_GRACE_MS,
+      );
+    }
 
     if (stream) {
       stream.getTracks().forEach((t) => t.stop());
       setStream(null);
       setCameraError(null);
+      sayStatus(UI[prefsRef.current.locale].cameraOff, true);
+      cue("ready");
       return;
     }
     try {
@@ -355,24 +540,32 @@ export function useGuide() {
       });
       setStream(s);
       setCameraError(null);
+      sayStatus(UI[prefsRef.current.locale].cameraReady, true);
+      cue("ready");
     } catch {
-      setCameraError("Camera unavailable. The synthetic feed keeps the pipeline fully explorable.");
+      // The degraded notice speaks this, so it is not duplicated here.
+      setCameraError(UI[prefsRef.current.locale].cameraUnavailable);
     }
-  }, [engine, gate, stream]);
+  }, [clearFirstSweepTimer, cue, engine, gate, sayStatus, stream]);
 
   const reset = useCallback(() => {
-    stop();
+    stop(false);
     engine.reset();
     gate.reset();
     nextSweepAt.current = 0;
     lastScene.current = null;
+    lastLine.current = null;
+    lastScanAt.current = null;
+    staleNotified.current = false;
+    setViewAgeMs(null);
     setObjects([]);
     setHistory([]);
     setActiveLine(null);
     setCameraError(null);
     setSweep({ inFlight: false, lastDurationMs: null, outcomes: [] });
     setStats({ fps: 0, latencyMs: 0, segmented: 0, coasted: 0, hitRate: 0, objectsTracked: 0 });
-  }, [engine, gate, stop]);
+    sayStatus(UI[prefsRef.current.locale].guideReset);
+  }, [engine, gate, sayStatus, stop]);
 
   useEffect(
     () => () => {
@@ -386,8 +579,78 @@ export function useGuide() {
   useEffect(
     () => () => {
       sweepAbort.current?.abort();
+      if (firstSweepTimer.current !== null) window.clearTimeout(firstSweepTimer.current);
     },
     [],
+  );
+
+  const setSpeechOn = useCallback(
+    (on: boolean) => {
+      updatePrefs({ speechOn: on });
+      const t = UI[prefsRef.current.locale];
+      sayStatus(on ? t.narrationSpeechOn : t.narrationSpeechOff);
+    },
+    [sayStatus, updatePrefs],
+  );
+
+  const setDetail = useCallback(
+    (detail: DetailLevel) => {
+      updatePrefs({ detail });
+      sayStatus(UI[prefsRef.current.locale].detailSpoken[detail]);
+    },
+    [sayStatus, updatePrefs],
+  );
+
+  const setSpeed = useCallback(
+    (speed: SpeechSpeed) => {
+      updatePrefs({ speed });
+      setAudioPreferences({ speed, earconsOn: prefsRef.current.earconsOn });
+      sayStatus(UI[prefsRef.current.locale].speedSpoken[speed]);
+    },
+    [sayStatus, updatePrefs],
+  );
+
+  const setEarconsOn = useCallback(
+    (on: boolean) => {
+      updatePrefs({ earconsOn: on });
+      setAudioPreferences({ speed: prefsRef.current.speed, earconsOn: on });
+      if (on) earcon("ready");
+      const t = UI[prefsRef.current.locale];
+      sayStatus(on ? t.earconsOnSpeech : t.earconsOffSpeech);
+    },
+    [sayStatus, updatePrefs],
+  );
+
+  const setScreenReaderMode = useCallback(
+    (on: boolean) => {
+      updatePrefs({ screenReaderMode: on });
+      const t = UI[prefsRef.current.locale];
+      if (on) {
+        stopSpeech();
+        setStatusText(t.screenReaderOn);
+      } else {
+        // prefsRef still holds the old value inside this handler, so sayStatus would
+        // stay silent; the confirmation must be the first thing spoken again.
+        setStatusText(t.screenReaderOff);
+        announceAudio(t.screenReaderOff, true);
+      }
+    },
+    [updatePrefs],
+  );
+
+  const setLocale = useCallback(
+    (locale: Locale) => {
+      updatePrefs({ locale });
+      // Switch the voice before speaking the confirmation, so it lands in the new language.
+      setAudioPreferences({
+        speed: prefsRef.current.speed,
+        earconsOn: prefsRef.current.earconsOn,
+        locale,
+      });
+      const spec = localeSpec(locale);
+      sayStatus(UI[locale].languageSpeech(spec.label), true);
+    },
+    [sayStatus, updatePrefs],
   );
 
   const vocabulary = useMemo<VocabularyRow[]>(() => {
@@ -402,13 +665,13 @@ export function useGuide() {
       const e = byConcept.get(spec.id);
       return {
         concept: spec.id,
-        label: spec.label,
+        label: conceptLabel(spec.id, prefs.locale, spec.label),
         tier: spec.tier,
         count: e?.count ?? 0,
         confidence: e?.confidence ?? 0,
       };
     });
-  }, [objects]);
+  }, [objects, prefs.locale]);
 
   /**
    * Degraded mode. An assistive device that cannot see must say so; the failure state that
@@ -418,24 +681,36 @@ export function useGuide() {
     if (provider === "mock") return cameraError;
     // A paused guide is not a degraded one. Failure banners describe the live loop.
     if (!running) return null;
+    const t = UI[prefs.locale];
     if (sweep.outcomes.length === 0) {
-      return sweep.inFlight
-        ? null
-        : "Live mode is on but no sweep has completed. Is the proxy running on port 8787?";
+      if (!firstSweepSlow) return null;
+      return sweep.inFlight ? null : t.degradedProxy;
     }
     const failed = sweep.outcomes.filter((o) => !o.ok);
     if (failed.length === sweep.outcomes.length) {
       const reason = failed[0]?.error ?? "unknown";
       if (reason.includes("timeout")) {
-        return `SAM 3.1 did not answer within ${Math.round(SWEEP_BUDGET_MS / 1000)}s. Narration is paused — the geometry on screen is stale.`;
+        return t.degradedTimeout(Math.round(SWEEP_BUDGET_MS / 1000));
       }
-      if (reason === "aborterror") {
-        return "The live sweep was cancelled. Narration is paused until a sweep completes.";
-      }
-      return `Segmentation is unavailable (${reason}). Narration is paused rather than guessed.`;
+      if (reason === "aborterror") return t.degradedAborted;
+      return t.degradedUnavailable(reason);
     }
     return cameraError;
-  }, [cameraError, provider, running, sweep.inFlight, sweep.outcomes]);
+  }, [cameraError, firstSweepSlow, prefs.locale, provider, running, sweep.inFlight, sweep.outcomes]);
+
+  // A banner nobody hears is not a warning. Speak each distinct degraded state once,
+  // including camera failures in synthetic mode.
+  const spokenDegraded = useRef<string | null>(null);
+  useEffect(() => {
+    if (!degraded) {
+      spokenDegraded.current = null;
+      return;
+    }
+    if (spokenDegraded.current === degraded) return;
+    spokenDegraded.current = degraded;
+    sayStatus(degraded);
+    cue("error");
+  }, [cue, degraded, sayStatus]);
 
   return {
     running,
@@ -443,16 +718,29 @@ export function useGuide() {
     stop,
     reset,
     describeNow,
+    repeatLast,
     objects,
     vocabulary,
     history,
     activeLine,
     soundingIds,
     stats,
-    speechOn,
+    speechOn: prefs.speechOn,
     setSpeechOn,
-    sonarOn,
-    setSonarOn,
+    earconsOn: prefs.earconsOn,
+    setEarconsOn,
+    detail: prefs.detail,
+    setDetail,
+    speed: prefs.speed,
+    setSpeed,
+    locale: prefs.locale,
+    setLocale,
+    screenReaderMode: prefs.screenReaderMode,
+    setScreenReaderMode,
+    statusText,
+    speakStatus: sayStatus,
+    speakText,
+    viewAgeMs,
     provider,
     stream,
     videoRef,

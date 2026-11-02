@@ -66,11 +66,16 @@ export type DistanceBand = "near" | "mid" | "far" | "unknown";
 
 export interface NarrationLine {
   id: string;
+  /** Canonical English sentence. Locales other than English rebuild from the fields below. */
   text: string;
   concept: string;
   tier: HazardTier;
   bearingDeg: number;
   distanceBand: DistanceBand;
+  /** Objects represented by this line, so localizers can choose singular or plural. */
+  count: number;
+  /** Estimated metres, kept so distance phrasing can be rebuilt in another language. */
+  distanceM: number | null;
   timestampMs: number;
   /** Why this line fired — surfaced in the UI so the demo can explain itself. */
   trigger: "new" | "approaching" | "reappeared" | "manual";
