@@ -1,12 +1,17 @@
-import { defineConfig } from "vite";
+import { defineConfig, type ProxyOptions } from "vite";
 import react from "@vitejs/plugin-react";
 
 // Keeps the phone on one origin in local dev. The API key lives in the proxy process and is
 // never a VITE_* variable, so it cannot be inlined into the shipped bundle.
-const apiProxy = {
+const apiProxy: Record<string, ProxyOptions> = {
   "/api": {
     target: "http://127.0.0.1:8787",
     changeOrigin: true,
+    configure: (proxy) => {
+      // The proxy pins its allowlist to the loopback dev origin. A tunnel changes the
+      // browser's Origin, so normalise it here instead of widening the server's check.
+      proxy.on("proxyReq", (req) => req.setHeader("origin", "http://localhost:5173"));
+    },
   },
 };
 
